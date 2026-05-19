@@ -15,4 +15,8 @@ npm run dev
 npm run build
 ```
 
-The app deploys to GitHub Pages through the workflow in `.github/workflows/deploy.yml`.
+For GitHub Pages project URLs, build with the repository base path:
+
+```bash
+VITE_BASE_PATH=/nanomate-learning-map/ npm run build
+```
