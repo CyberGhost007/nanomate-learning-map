@@ -826,7 +826,7 @@ function KpiPanel({ onNext }) {
             <metric.icon />
             <span>{metric.label}</span>
             <strong>{metric.value}</strong>
-            {metric.active && <small>through slack and balance algorithm</small>}
+            {metric.active && <small>through slack and valence algorithm</small>}
           </button>
         ))}
       </div>
