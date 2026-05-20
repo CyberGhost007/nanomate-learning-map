@@ -2,6 +2,7 @@ import React, { useMemo, useState } from "react";
 import { createRoot } from "react-dom/client";
 import {
   Activity,
+  ArrowLeft,
   ArrowRight,
   AlertTriangle,
   BarChart3,
@@ -71,16 +72,16 @@ const flow = [
   {
     id: "gap",
     unlocksAt: 4,
-    nextLevel: 5,
-    className: "node-gap",
+    nextLevel: 4,
+    className: "node-pathway",
     tone: "violet",
     icon: Zap,
-    title: "Gap Analysis"
+    title: "Micro Ability Pathway"
   },
   {
     id: "quiz",
-    unlocksAt: 5,
-    nextLevel: 6,
+    unlocksAt: 4,
+    nextLevel: 5,
     className: "node-quiz",
     tone: "rose",
     icon: BookOpen,
@@ -88,8 +89,8 @@ const flow = [
   },
   {
     id: "flashcard",
-    unlocksAt: 5,
-    nextLevel: 6,
+    unlocksAt: 4,
+    nextLevel: 5,
     className: "node-flashcard",
     tone: "sky",
     icon: CreditCard,
@@ -97,54 +98,53 @@ const flow = [
   },
   {
     id: "tips",
-    unlocksAt: 5,
-    nextLevel: 6,
+    unlocksAt: 4,
+    nextLevel: 5,
     className: "node-tips",
     tone: "gold",
     icon: Lightbulb,
     title: "Tips"
   },
   {
-    id: "nudge",
-    unlocksAt: 7,
-    nextLevel: 8,
-    className: "node-nudge",
+    id: "simulate",
+    unlocksAt: 6,
+    nextLevel: 7,
+    className: "node-simulate",
     tone: "blue",
-    icon: Bell,
-    title: "Nudge Generated"
+    icon: TrendingUp,
+    title: "Simulate Outcome"
   },
   {
-    id: "updated",
-    unlocksAt: 8,
-    nextLevel: 9,
-    className: "node-updated",
+    id: "approve",
+    unlocksAt: 7,
+    nextLevel: 8,
+    className: "node-approve",
     tone: "green",
-    icon: RefreshCw,
-    title: "Ability Score Updated"
+    icon: CheckCircle2,
+    title: "Review and Approve"
   },
   {
     id: "released",
-    unlocksAt: 9,
-    nextLevel: 9,
+    unlocksAt: 8,
+    nextLevel: 8,
     className: "node-release",
     tone: "magenta",
     icon: MapIcon,
-    title: "Map Generated and Released"
+    title: "Activation Complete"
   }
 ];
 
-const finalLevel = 9;
+const finalLevel = 8;
 const phaseLabels = [
   "Profile",
   "Ability",
   "Scores",
   "KPI",
-  "Gap",
+  "Pathway",
   "Practice",
-  "Quiz",
-  "Nudge",
-  "Score Update",
-  "Release"
+  "Simulation",
+  "Approval",
+  "Activated"
 ];
 
 const practiceIds = ["quiz", "flashcard", "tips"];
@@ -231,17 +231,16 @@ function App() {
   const [selectedPractice, setSelectedPractice] = useState("quiz");
 
   const phase = selectedLearner
-    ? level === 6
+    ? level === 5
       ? practicePhaseLabels[selectedPractice]
       : phaseLabels[Math.min(level, phaseLabels.length - 1)]
     : "Learners";
   const completion = selectedLearner ? Math.round((Math.min(level, finalLevel) / finalLevel) * 100) : 0;
   const activeNode = useMemo(() => {
     if (!selectedLearner) return null;
-    if (level >= 9) return "released";
-    if (level >= 8) return "updated";
-    if (level >= 7) return "nudge";
-    if (level >= 6) return selectedPractice;
+    if (level >= 8) return "released";
+    if (level >= 7) return "approve";
+    if (level >= 6) return "simulate";
     if (level >= 5) return selectedPractice;
     if (level >= 4) return "gap";
     if (level >= 3) return "kpi";
@@ -267,7 +266,17 @@ function App() {
 
   const choosePractice = (practice) => {
     setSelectedPractice(practice);
-    reveal(6);
+    reveal(5);
+  };
+
+  const goBack = () => {
+    if (selectedLearner && level === 0) {
+      setSelectedLearner(null);
+      setFocusedLearner(selectedLearner);
+      return;
+    }
+
+    setLevel((current) => Math.max(0, current - 1));
   };
 
   return (
@@ -297,6 +306,7 @@ function App() {
             setSelectedAnswer={setSelectedAnswer}
             chooseLearner={chooseLearner}
             openLearnerMap={openLearnerMap}
+            onBack={goBack}
             reveal={reveal}
             choosePractice={choosePractice}
           />
@@ -367,7 +377,7 @@ function JourneyMap({
       <div className="journey-grid">
         {flow.map((node) => {
           const isPracticeNode = practiceIds.includes(node.id);
-          const completed = isPracticeNode ? level > 6 && node.id === selectedPractice : level > node.unlocksAt;
+          const completed = isPracticeNode ? level > 5 && node.id === selectedPractice : level > node.unlocksAt;
           const displayNode =
             node.id === "profile" && selectedLearner ? { ...node, subtitle: selectedLearner.name } : node;
 
@@ -486,16 +496,17 @@ function ConnectionLayer({ level }) {
       {dot(2, 50, 38)}
 
       {line(3, "M16.5 49 V53 Q16.5 55 18.5 55 H31.5 Q33.5 55 33.5 57")}
+      {line(4, "M43.5 65 H56.5", { "data-cool": true })}
       {line(4, "M83.5 49 V53 Q83.5 55 81.5 55 H68.5 Q66.5 55 66.5 57", { "data-cool": true })}
 
-      {line(5, "M66.5 65 V69 Q66.5 71 64.5 71 H18.5 Q16.5 71 16.5 73", { "data-cool": true })}
-      {line(5, "M66.5 65 V69 Q66.5 71 64.5 71 H52 Q50 71 50 73", { "data-cool": true })}
-      {line(5, "M66.5 65 V71 H83.5 V73", { "data-cool": true })}
-      {dot(5, 66.5, 71, { "data-cool": true })}
+      {line(4, "M66.5 65 V69 Q66.5 71 64.5 71 H18.5 Q16.5 71 16.5 73", { "data-cool": true })}
+      {line(4, "M66.5 65 V69 Q66.5 71 64.5 71 H52 Q50 71 50 73", { "data-cool": true })}
+      {line(4, "M66.5 65 V71 H83.5 V73", { "data-cool": true })}
+      {dot(4, 66.5, 71, { "data-cool": true })}
 
-      {line(7, "M16.5 81 V86 Q16.5 88 18.5 88 H20", { "data-cool": true })}
-      {line(8, "M30.6 91 H36.1", { "data-cool": true })}
-      {line(9, "M63.9 91 H69.4", { "data-cool": true })}
+      {line(6, "M16.5 81 V86 Q16.5 88 18.5 88 H20", { "data-cool": true })}
+      {line(7, "M30.6 91 H36.1", { "data-cool": true })}
+      {line(8, "M63.9 91 H69.4", { "data-cool": true })}
     </svg>
   );
 }
@@ -548,6 +559,7 @@ function DetailPanel({
   setSelectedAnswer,
   chooseLearner,
   openLearnerMap,
+  onBack,
   reveal,
   choosePractice
 }) {
@@ -555,6 +567,7 @@ function DetailPanel({
 
   return (
     <aside className={`detail-panel ${isProfileSummary ? "is-profile-summary" : ""}`}>
+      {selectedLearner && <BackButton onClick={onBack} label={level === 0 ? "Learners" : "Back"} />}
       {!selectedLearner && (
         focusedLearner ? (
           <LearnerPreviewPanel learner={focusedLearner} onOpenMap={() => openLearnerMap(focusedLearner)} />
@@ -570,21 +583,31 @@ function DetailPanel({
         />
       )}
       {level === 1 && <AbilityPanel onNext={() => reveal(2)} />}
-      {level === 2 && <ScoresPanel onOutcome={() => reveal(3)} onSkill={() => reveal(4)} />}
+      {level === 2 && <ScoresPanel onOutcome={() => reveal(3)} onSkill={() => reveal(3)} />}
       {level === 3 && <KpiPanel onNext={() => reveal(4)} />}
-      {level === 4 && <GapPanel onNext={() => reveal(5)} />}
-      {level === 5 && <PracticePanel onSelect={choosePractice} />}
-      {level === 6 && selectedPractice === "quiz" && (
+      {level === 4 && <PathwayPanel onSelect={choosePractice} />}
+      {level === 5 && selectedPractice === "quiz" && (
         <QuizPanel
           selectedAnswer={selectedAnswer}
           setSelectedAnswer={setSelectedAnswer}
-          onNext={() => reveal(7)}
+          onNext={() => reveal(6)}
         />
       )}
-      {level === 6 && selectedPractice === "flashcard" && <FlashcardPanel onNext={() => reveal(7)} />}
-      {level === 6 && selectedPractice === "tips" && <TipsPanel onNext={() => reveal(7)} />}
-      {level >= 7 && <ReleasePanel level={level} reveal={reveal} />}
+      {level === 5 && selectedPractice === "flashcard" && <FlashcardPanel onNext={() => reveal(6)} />}
+      {level === 5 && selectedPractice === "tips" && <TipsPanel onNext={() => reveal(6)} />}
+      {level === 6 && <SimulationPanel onNext={() => reveal(7)} />}
+      {level === 7 && <ApprovalPanel onApprove={() => reveal(8)} />}
+      {level >= 8 && <ReleasePanel />}
     </aside>
+  );
+}
+
+function BackButton({ onClick, label }) {
+  return (
+    <button type="button" className="back-action" onClick={onClick}>
+      <ArrowLeft />
+      <span>{label}</span>
+    </button>
   );
 }
 
@@ -773,6 +796,7 @@ function KpiPanel({ onNext }) {
             <metric.icon />
             <span>{metric.label}</span>
             <strong>{metric.value}</strong>
+            {metric.active && <small>through slack and balance algorithm</small>}
           </button>
         ))}
       </div>
@@ -780,30 +804,7 @@ function KpiPanel({ onNext }) {
   );
 }
 
-function GapPanel({ onNext }) {
-  return (
-    <>
-      <PanelHeader label="Gap Analysis" title="Skill-Will Gap" icon={Zap} />
-      <div className="gap-card">
-        <div className="gap-row">
-          <span>Knowledge</span>
-          <strong>Medium</strong>
-        </div>
-        <div className="gap-row">
-          <span>Confidence</span>
-          <strong>Needs support</strong>
-        </div>
-        <div className="gap-row">
-          <span>Nudge Priority</span>
-          <strong>High</strong>
-        </div>
-      </div>
-      <PrimaryButton onClick={onNext}>Generate Practice</PrimaryButton>
-    </>
-  );
-}
-
-function PracticePanel({ onSelect }) {
+function PathwayPanel({ onSelect }) {
   const items = [
     { id: "quiz", label: "Quiz", icon: BookOpen, tone: "rose" },
     { id: "flashcard", label: "Flashcard", icon: CreditCard, tone: "sky" },
@@ -812,7 +813,17 @@ function PracticePanel({ onSelect }) {
 
   return (
     <>
-      <PanelHeader label="Practice" title="Learning Actions" icon={BookOpen} />
+      <PanelHeader label="TAT Focus" title="Micro Ability Pathway" icon={Zap} />
+      <section className="pathway-context">
+        <div>
+          <span>Input basis</span>
+          <strong>SOP + learner context</strong>
+        </div>
+        <p>
+          The pathway uses SOP evidence, TAT handling signals, and Nikita's learner context to generate the three
+          recommended micro-actions below.
+        </p>
+      </section>
       <div className="practice-list">
         {items.map((item) => (
           <button
@@ -862,7 +873,7 @@ function QuizPanel({ selectedAnswer, setSelectedAnswer, onNext }) {
           </button>
         </Question>
       </div>
-      <PrimaryButton onClick={onNext}>Generate Nudge</PrimaryButton>
+      <PrimaryButton onClick={onNext}>Simulate the Outcome</PrimaryButton>
     </>
   );
 }
@@ -892,7 +903,7 @@ function FlashcardPanel({ onNext }) {
           Got it
         </button>
       </div>
-      <PrimaryButton onClick={onNext}>Generate Nudge</PrimaryButton>
+      <PrimaryButton onClick={onNext}>Simulate the Outcome</PrimaryButton>
     </>
   );
 }
@@ -927,66 +938,83 @@ function TipsPanel({ onNext }) {
           </article>
         ))}
       </div>
-      <PrimaryButton onClick={onNext}>Generate Nudge</PrimaryButton>
+      <PrimaryButton onClick={onNext}>Simulate the Outcome</PrimaryButton>
     </>
   );
 }
 
-function ReleasePanel({ level, reveal }) {
+function SimulationPanel({ onNext }) {
+  return (
+    <>
+      <PanelHeader label="Simulation" title="Simulate the Outcome" icon={TrendingUp} />
+      <section className="simulation-card">
+        <div>
+          <small>Projected impact</small>
+          <span>+5%</span>
+          <strong>TAT improvement</strong>
+        </div>
+        <p>
+          If Nikita completes this micro ability pathway, the model projects a 5% improvement in the selected priority
+          KPI.
+        </p>
+      </section>
+      <PrimaryButton onClick={onNext}>Review and Approve</PrimaryButton>
+    </>
+  );
+}
+
+function ApprovalPanel({ onApprove }) {
+  return (
+    <>
+      <PanelHeader label="Human in the Loop" title="Review and Approve" icon={CheckCircle2} />
+      <section className="approval-card">
+        <span>Supervisor checkpoint</span>
+        <p>Approve the learner map so the recommended content, nudges, and commitment mechanic can be launched.</p>
+      </section>
+      <PrimaryButton onClick={onApprove}>Approve Map</PrimaryButton>
+    </>
+  );
+}
+
+function ReleasePanel() {
   const statuses = [
     {
-      level: 7,
-      nextLevel: 8,
-      label: "Nudge Generated",
-      detail: "Create the learner nudge",
+      label: "Map is activated",
+      detail: "Learner pathway is now live",
       icon: Bell,
       tone: "blue"
     },
     {
-      level: 8,
-      nextLevel: 9,
-      label: "Ability Score Updated",
-      detail: "Apply the new score state",
+      label: "Nudges are sent",
+      detail: "TAT practice reminders delivered",
       icon: RefreshCw,
       tone: "green"
     },
     {
-      level: 9,
-      nextLevel: 9,
-      label: "Map Generated and Released",
-      detail: "Publish the final learner map",
+      label: "Commitment mechanic launched",
+      detail: "Follow-through loop started",
       icon: MapIcon,
       tone: "magenta"
     }
   ];
-  const title =
-    level === 7
-      ? "Generate Nudge"
-      : level === 8
-        ? "Update Ability Score"
-        : "Map Released";
 
   return (
     <>
-      <PanelHeader label="Release Flow" title={title} icon={MapIcon} />
+      <PanelHeader label="Activated" title="Map Released" icon={MapIcon} />
       <div className="status-list">
-        {statuses.filter((status) => level >= status.level).map((status) => (
+        {statuses.map((status) => (
           <button
             key={status.label}
             type="button"
-            className={`status-card ${status.tone} ${level === status.level ? "is-active" : ""} ${
-              level > status.level ? "is-complete" : ""
-            } ${level < status.level ? "is-locked" : ""}`}
-            disabled={level < status.level || level > status.level || status.level === finalLevel}
-            onClick={() => reveal(status.nextLevel)}
+            className={`status-card ${status.tone} is-complete`}
+            disabled
           >
             <status.icon />
             <span>
               <strong>{status.label}</strong>
               <small>{status.detail}</small>
             </span>
-            {level > status.level && <Check size={18} />}
-            {level === status.level && status.level < finalLevel && <ArrowRight size={18} />}
+            <Check size={18} />
           </button>
         ))}
       </div>

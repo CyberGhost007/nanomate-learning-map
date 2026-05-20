@@ -492,7 +492,7 @@ button {
   grid-column: 2 / 4;
 }
 
-.node-gap {
+.node-pathway {
   grid-column: 4 / 6;
 }
 
@@ -508,11 +508,11 @@ button {
   grid-column: 5 / 7;
 }
 
-.node-nudge {
+.node-simulate {
   grid-column: 1 / 3;
 }
 
-.node-updated {
+.node-approve {
   grid-column: 3 / 5;
 }
 
@@ -520,8 +520,8 @@ button {
   grid-column: 5 / 7;
 }
 
-.node-nudge.is-complete::after,
-.node-updated.is-complete::after {
+.node-simulate.is-complete::after,
+.node-approve.is-complete::after {
   content: "";
   position: absolute;
   left: 100%;
@@ -635,6 +635,27 @@ button {
   gap: 18px;
 }
 
+.back-action {
+  width: fit-content;
+  min-height: 34px;
+  border: 1px solid rgba(147, 197, 253, 0.36);
+  border-radius: 999px;
+  color: #1e3a8a;
+  background: rgba(255, 255, 255, 0.72);
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 7px 11px;
+  font-size: 12px;
+  font-weight: 900;
+  cursor: pointer;
+}
+
+.back-action svg {
+  width: 15px;
+  height: 15px;
+}
+
 .detail-panel.is-profile-summary {
   gap: 12px;
   padding: clamp(16px, 2vw, 22px);
@@ -691,7 +712,9 @@ button {
 .stat-card,
 .score-card,
 .question-card,
-.gap-card,
+.pathway-context,
+.simulation-card,
+.approval-card,
 .metric-card {
   border: 1px solid #e5e9f2;
   border-radius: 14px;
@@ -967,7 +990,8 @@ button {
 }
 
 .stat-card span,
-.gap-row span,
+.pathway-context span,
+.approval-card span,
 .metric-card span {
   color: var(--text-soft);
   font-size: 12px;
@@ -977,7 +1001,7 @@ button {
 }
 
 .stat-card strong,
-.gap-row strong {
+.pathway-context strong {
   display: block;
   margin-top: 6px;
   color: #1d2939;
@@ -1109,6 +1133,13 @@ button {
   line-height: 1.15;
 }
 
+.metric-card small {
+  color: #64748b;
+  font-size: 11px;
+  font-weight: 800;
+  line-height: 1.25;
+}
+
 .metric-card.is-selected {
   cursor: pointer;
   color: #172033;
@@ -1121,21 +1152,64 @@ button {
   color: #1d4ed8;
 }
 
-.gap-card {
-  padding: 8px 16px;
+.pathway-context,
+.simulation-card,
+.approval-card {
+  padding: 16px;
 }
 
-.gap-row {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
+.pathway-context {
+  display: grid;
+  gap: 12px;
+}
+
+.pathway-context p,
+.simulation-card p,
+.approval-card p {
+  margin: 0;
+  color: #475569;
+  font-size: 14px;
+  line-height: 1.48;
+}
+
+.simulation-card {
+  display: grid;
   gap: 14px;
-  min-height: 54px;
-  border-bottom: 1px solid #eef1f6;
+  background: linear-gradient(145deg, rgba(255, 255, 255, 0.96), rgba(239, 246, 255, 0.82));
 }
 
-.gap-row:last-child {
-  border-bottom: 0;
+.simulation-card small {
+  color: var(--text-soft);
+  font-size: 12px;
+  font-weight: 850;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+}
+
+.simulation-card span {
+  display: block;
+  margin-top: 4px;
+  color: #1d4ed8;
+  font-size: 58px;
+  line-height: 0.95;
+  font-weight: 900;
+  letter-spacing: 0;
+}
+
+.simulation-card strong {
+  display: block;
+  margin-top: 6px;
+  color: #475569;
+  font-size: 13px;
+  font-weight: 850;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+}
+
+.approval-card {
+  display: grid;
+  gap: 8px;
+  background: rgba(248, 251, 255, 0.82);
 }
 
 .practice-card {
@@ -1565,8 +1639,8 @@ button {
 
   .node-profile,
   .node-ability,
-  .node-nudge,
-  .node-updated,
+  .node-simulate,
+  .node-approve,
   .node-release {
     grid-column: 1 / -1;
   }
@@ -1578,7 +1652,7 @@ button {
   }
 
   .node-skill,
-  .node-gap,
+  .node-pathway,
   .node-flashcard,
   .node-tips {
     grid-column: auto;
@@ -1588,8 +1662,8 @@ button {
     display: none;
   }
 
-  .node-nudge.is-complete::after,
-  .node-updated.is-complete::after {
+  .node-simulate.is-complete::after,
+  .node-approve.is-complete::after {
     display: none;
   }
 
