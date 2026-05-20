@@ -579,7 +579,7 @@ function DetailPanel({
         <LearnerPreviewPanel
           learner={selectedLearner}
           activeSection={selectedProfileNode}
-          action={<PrimaryButton onClick={() => reveal(1)}>Start Map</PrimaryButton>}
+          action={<PrimaryButton onClick={() => reveal(1)} compact>Start Map</PrimaryButton>}
         />
       )}
       {level === 1 && <AbilityPanel onNext={() => reveal(2)} />}
@@ -611,16 +611,19 @@ function BackButton({ onClick, label }) {
   );
 }
 
-function PanelHeader({ label, title, icon: Icon }) {
+function PanelHeader({ label, title, icon: Icon, action }) {
   return (
     <header className="panel-header">
-      <span className="panel-icon">
-        <Icon />
-      </span>
-      <div>
-        <p>{label}</p>
-        <h2>{title}</h2>
+      <div className="panel-title-lockup">
+        <span className="panel-icon">
+          <Icon />
+        </span>
+        <div>
+          <p>{label}</p>
+          <h2>{title}</h2>
+        </div>
       </div>
+      {action && <div className="panel-header-action">{action}</div>}
     </header>
   );
 }
@@ -630,31 +633,38 @@ function LearnerQueuePanel({ onSelect }) {
 
   return (
     <>
-      <PanelHeader label="Learners" title="Attention Queue" icon={UserRound} />
+      <PanelHeader
+        label="Learners"
+        title="Attention Queue"
+        icon={UserRound}
+        action={<PrimaryButton onClick={() => onSelect(attentionLearner)} compact>View Nikita Profile</PrimaryButton>}
+      />
       <div className="stat-grid">
         <Metric label="Learners" value="3" />
         <Metric label="Needs attention" value={attentionLearner.name} />
         <Metric label="Focus" value="TAT" />
         <Metric label="Status" value="Ready" />
       </div>
-      <PrimaryButton onClick={() => onSelect(attentionLearner)}>View Nikita Profile</PrimaryButton>
     </>
   );
 }
 
 function LearnerPreviewPanel({ learner, onOpenMap, action, activeSection }) {
+  const headerAction =
+    action || (learner.attention && onOpenMap ? (
+      <PrimaryButton onClick={onOpenMap} compact>Open Learner Profile</PrimaryButton>
+    ) : null);
+
   return (
     <>
-      <PanelHeader label="Nanomate Profile" title={learner.name} icon={UserRound} />
+      <PanelHeader label="Nanomate Profile" title={learner.name} icon={UserRound} action={headerAction} />
       <LearnerProfileCards learner={learner} activeSection={activeSection} />
-      {action || (learner.attention ? (
-        <PrimaryButton onClick={onOpenMap}>Open Learner Profile</PrimaryButton>
-      ) : (
+      {!headerAction && (
         <div className="profile-status">
           <CheckCircle2 />
           <span>Map current</span>
         </div>
-      ))}
+      )}
     </>
   );
 }
@@ -749,7 +759,12 @@ function LearnerProfileCards({ learner, activeSection }) {
 function AbilityPanel({ onNext }) {
   return (
     <>
-      <PanelHeader label="Ability" title="Score Snapshot" icon={Target} />
+      <PanelHeader
+        label="Ability"
+        title="Score Snapshot"
+        icon={Target}
+        action={<PrimaryButton onClick={onNext} compact>View Scores</PrimaryButton>}
+      />
       <div className="score-card">
         <div>
           <span className="score-value">82</span>
@@ -757,7 +772,6 @@ function AbilityPanel({ onNext }) {
         </div>
         <p>Balanced accuracy with room to improve turnaround handling.</p>
       </div>
-      <PrimaryButton onClick={onNext}>View Scores</PrimaryButton>
     </>
   );
 }
@@ -846,7 +860,12 @@ function PathwayPanel({ onSelect }) {
 function QuizPanel({ selectedAnswer, setSelectedAnswer, onNext }) {
   return (
     <>
-      <PanelHeader label="TAT Quiz" title="Quick Check" icon={BookOpen} />
+      <PanelHeader
+        label="TAT Quiz"
+        title="Quick Check"
+        icon={BookOpen}
+        action={<PrimaryButton onClick={onNext} compact>Simulate</PrimaryButton>}
+      />
       <div className="quiz-stack">
         <Question index={1} text="What is period basis for Master Policy?">
           {["RAD", "CMD"].map((answer) => (
@@ -873,7 +892,6 @@ function QuizPanel({ selectedAnswer, setSelectedAnswer, onNext }) {
           </button>
         </Question>
       </div>
-      <PrimaryButton onClick={onNext}>Simulate the Outcome</PrimaryButton>
     </>
   );
 }
@@ -881,7 +899,12 @@ function QuizPanel({ selectedAnswer, setSelectedAnswer, onNext }) {
 function FlashcardPanel({ onNext }) {
   return (
     <>
-      <PanelHeader label="Flashcard" title="TAT Concept Card" icon={CreditCard} />
+      <PanelHeader
+        label="Flashcard"
+        title="TAT Concept Card"
+        icon={CreditCard}
+        action={<PrimaryButton onClick={onNext} compact>Simulate</PrimaryButton>}
+      />
       <section className="flashcard-panel">
         <div className="flashcard-topline">
           <span>Master Policy</span>
@@ -903,7 +926,6 @@ function FlashcardPanel({ onNext }) {
           Got it
         </button>
       </div>
-      <PrimaryButton onClick={onNext}>Simulate the Outcome</PrimaryButton>
     </>
   );
 }
@@ -926,7 +948,12 @@ function TipsPanel({ onNext }) {
 
   return (
     <>
-      <PanelHeader label="Tips" title="TAT Coaching Tips" icon={Lightbulb} />
+      <PanelHeader
+        label="Tips"
+        title="TAT Coaching Tips"
+        icon={Lightbulb}
+        action={<PrimaryButton onClick={onNext} compact>Simulate</PrimaryButton>}
+      />
       <div className="tip-list">
         {tips.map((tip, index) => (
           <article className="tip-card" key={tip.title}>
@@ -938,7 +965,6 @@ function TipsPanel({ onNext }) {
           </article>
         ))}
       </div>
-      <PrimaryButton onClick={onNext}>Simulate the Outcome</PrimaryButton>
     </>
   );
 }
@@ -946,7 +972,12 @@ function TipsPanel({ onNext }) {
 function SimulationPanel({ onNext }) {
   return (
     <>
-      <PanelHeader label="Simulation" title="Simulate the Outcome" icon={TrendingUp} />
+      <PanelHeader
+        label="Simulation"
+        title="Simulate the Outcome"
+        icon={TrendingUp}
+        action={<PrimaryButton onClick={onNext} compact>Review</PrimaryButton>}
+      />
       <section className="simulation-card">
         <div>
           <small>Projected impact</small>
@@ -958,7 +989,6 @@ function SimulationPanel({ onNext }) {
           KPI.
         </p>
       </section>
-      <PrimaryButton onClick={onNext}>Review and Approve</PrimaryButton>
     </>
   );
 }
@@ -966,12 +996,16 @@ function SimulationPanel({ onNext }) {
 function ApprovalPanel({ onApprove }) {
   return (
     <>
-      <PanelHeader label="Human in the Loop" title="Review and Approve" icon={CheckCircle2} />
+      <PanelHeader
+        label="Human in the Loop"
+        title="Review and Approve"
+        icon={CheckCircle2}
+        action={<PrimaryButton onClick={onApprove} compact>Approve</PrimaryButton>}
+      />
       <section className="approval-card">
         <span>Supervisor checkpoint</span>
         <p>Approve the learner map so the recommended content, nudges, and commitment mechanic can be launched.</p>
       </section>
-      <PrimaryButton onClick={onApprove}>Approve Map</PrimaryButton>
     </>
   );
 }
@@ -1051,9 +1085,9 @@ function Question({ index, text, children }) {
   );
 }
 
-function PrimaryButton({ children, onClick }) {
+function PrimaryButton({ children, onClick, compact = false }) {
   return (
-    <button type="button" className="primary-action" onClick={onClick}>
+    <button type="button" className={`primary-action ${compact ? "is-compact" : ""}`} onClick={onClick}>
       <span>{children}</span>
       <ArrowRight />
     </button>
