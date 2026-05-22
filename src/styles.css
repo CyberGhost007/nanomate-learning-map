@@ -154,10 +154,45 @@ button {
   position: relative;
   z-index: 1;
   display: grid;
-  grid-template-columns: repeat(6, minmax(0, 1fr));
-  grid-template-rows: repeat(6, 72px);
-  gap: 16px;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  grid-template-rows: repeat(8, minmax(54px, 64px));
+  gap: 12px 18px;
+  align-content: center;
+  width: min(780px, 100%);
   height: 100%;
+  margin: 0 auto;
+}
+
+.journey-grid.is-level-2 {
+  grid-template-rows: repeat(1, minmax(54px, 64px));
+}
+
+.journey-grid.is-level-3 {
+  grid-template-rows: repeat(2, minmax(54px, 64px));
+}
+
+.journey-grid.is-level-4 {
+  grid-template-rows: repeat(3, minmax(54px, 64px));
+}
+
+.journey-grid.is-level-5 {
+  grid-template-rows: repeat(4, minmax(54px, 64px));
+}
+
+.journey-grid.is-level-6 {
+  grid-template-rows: repeat(5, minmax(54px, 64px));
+}
+
+.journey-grid.is-level-7 {
+  grid-template-rows: repeat(6, minmax(54px, 64px));
+}
+
+.journey-grid.is-level-8 {
+  grid-template-rows: repeat(7, minmax(54px, 64px));
+}
+
+.journey-grid.is-level-9 {
+  grid-template-rows: repeat(8, minmax(54px, 64px));
 }
 
 .journey-map.is-roster {
@@ -165,7 +200,7 @@ button {
   align-items: center;
 }
 
-.journey-map.is-profile-nodes {
+.journey-map.is-team-start {
   display: grid;
   align-items: center;
 }
@@ -219,7 +254,123 @@ button {
 .learner-stage {
   position: relative;
   z-index: 1;
+  display: grid;
+  gap: 16px;
   width: 100%;
+}
+
+.member-score-banner {
+  min-width: 0;
+  border: 1px solid rgba(147, 197, 253, 0.42);
+  border-radius: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 18px;
+  background: linear-gradient(145deg, rgba(255, 255, 255, 0.96), rgba(219, 234, 254, 0.74));
+  box-shadow: 0 14px 34px rgba(15, 23, 42, 0.08);
+}
+
+.member-score-banner div {
+  min-width: 0;
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+}
+
+.member-score-banner span {
+  color: #475569;
+  font-size: 13px;
+  font-weight: 900;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+}
+
+.member-score-banner strong {
+  color: #1d4ed8;
+  font-size: clamp(24px, 3vw, 34px);
+  line-height: 0.9;
+  letter-spacing: 0;
+}
+
+.member-score-banner p {
+  max-width: 34ch;
+  margin: 0;
+  color: #475569;
+  font-size: 14px;
+  line-height: 1.45;
+  font-weight: 750;
+}
+
+.team-start-card {
+  width: min(520px, 100%);
+  justify-self: center;
+  min-height: 168px;
+  border: 1px solid rgba(147, 197, 253, 0.42);
+  border-radius: 20px;
+  color: #172033;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto auto;
+  align-items: center;
+  gap: 16px;
+  padding: 22px;
+  text-align: left;
+  cursor: pointer;
+  background: linear-gradient(145deg, rgba(255, 255, 255, 0.98), rgba(219, 234, 254, 0.78));
+  box-shadow: 0 18px 44px rgba(15, 23, 42, 0.1);
+}
+
+.team-start-card:hover,
+.team-start-card:focus-visible {
+  transform: translateY(-2px);
+  box-shadow: 0 22px 50px rgba(15, 23, 42, 0.13);
+  outline: none;
+}
+
+.team-start-card small {
+  display: block;
+  color: #64748b;
+  font-size: 12px;
+  font-weight: 900;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.team-start-card strong {
+  display: block;
+  margin-top: 5px;
+  color: #172033;
+  font-size: clamp(28px, 4vw, 42px);
+  line-height: 1.02;
+  letter-spacing: 0;
+}
+
+.team-start-card b {
+  color: #1d4ed8;
+  font-size: clamp(42px, 5vw, 58px);
+  line-height: 0.95;
+}
+
+.team-start-card > svg {
+  width: 22px;
+  height: 22px;
+  color: #1d4ed8;
+}
+
+.team-start-icon {
+  width: 58px;
+  height: 58px;
+  display: grid;
+  place-items: center;
+  border-radius: 16px;
+  color: #1d4ed8;
+  background: rgba(255, 255, 255, 0.72);
+}
+
+.team-start-icon svg {
+  width: 30px;
+  height: 30px;
 }
 
 .learner-grid {
@@ -358,66 +509,9 @@ button {
   letter-spacing: 0;
 }
 
-.connection-layer {
-  position: absolute;
-  inset: 28px;
-  width: calc(100% - 56px);
-  height: calc(100% - 56px);
-  z-index: 0;
-  pointer-events: none;
-}
-
-.map-line,
-.map-dot {
-  fill: none;
-  stroke: url("#lineWarm");
-  stroke-width: 0.42;
-  stroke-linecap: round;
-  stroke-linejoin: round;
-  opacity: 0;
-  filter: drop-shadow(0 7px 12px rgba(37, 99, 235, 0.16));
-}
-
-.map-line {
-  stroke-dasharray: 1;
-  stroke-dashoffset: 1;
-  transition:
-    opacity 180ms ease,
-    stroke-dashoffset 620ms cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-.map-line[data-cool] {
-  stroke: url("#lineCool");
-}
-
-.map-dot {
-  fill: #ffffff;
-  stroke-width: 0.42;
-  transform-box: fill-box;
-  transform-origin: center;
-  transform: scale(0.4);
-  transition:
-    opacity 180ms ease,
-    transform 260ms cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-.map-dot[data-cool] {
-  stroke: url("#lineCool");
-}
-
-.map-line.is-live {
-  opacity: 0.76;
-  stroke-width: 0.5;
-  stroke-dashoffset: 0;
-}
-
-.map-dot.is-live {
-  opacity: 1;
-  transform: scale(1);
-}
-
 .journey-node {
   position: relative;
+  z-index: 1;
   min-width: 0;
   height: 72px;
   border: 1px solid rgba(147, 197, 253, 0.42);
@@ -472,67 +566,110 @@ button {
     0 18px 42px rgba(37, 99, 235, 0.13);
 }
 
-.node-profile {
-  grid-column: 3 / 5;
+.journey-map:not(.is-roster):not(.is-team-start) .journey-node {
+  height: 64px;
+  padding: 10px 12px;
 }
 
-.node-ability {
-  grid-column: 3 / 5;
+.journey-map:not(.is-roster):not(.is-team-start) .icon-tile {
+  width: 42px;
+  height: 42px;
 }
 
-.node-outcome {
-  grid-column: 1 / 3;
+.journey-map:not(.is-roster):not(.is-team-start) .icon-tile svg {
+  width: 23px;
+  height: 23px;
+}
+
+.journey-node.has-side-connector::before,
+.journey-node.has-down-connector::before {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  border-radius: 999px;
+  background: linear-gradient(90deg, #2563eb, #38bdf8);
+  box-shadow: 0 7px 14px rgba(37, 99, 235, 0.18);
+}
+
+.journey-node.has-side-connector::before {
+  left: 100%;
+  top: 50%;
+  width: 18px;
+  height: 4px;
+  transform: translateY(-50%);
+}
+
+.journey-node.has-down-connector::before {
+  left: 50%;
+  top: 100%;
+  width: 4px;
+  height: 12px;
+  transform: translateX(-50%);
+}
+
+.node-team {
+  grid-column: 2 / 4;
+  grid-row: 1;
+}
+
+.node-member-a {
+  grid-column: 1 / 2;
+  grid-row: 1;
+}
+
+.node-member-b {
+  grid-column: 2 / 4;
+  grid-row: 1;
+}
+
+.node-member-c {
+  grid-column: 4 / 5;
+  grid-row: 1;
 }
 
 .node-skill {
-  grid-column: 5 / 7;
-}
-
-.node-kpi {
-  grid-column: 2 / 4;
-}
-
-.node-pathway {
-  grid-column: 4 / 6;
-}
-
-.node-quiz {
   grid-column: 1 / 3;
+  grid-row: 1;
 }
 
-.node-flashcard {
+.node-outcome {
   grid-column: 3 / 5;
+  grid-row: 1;
 }
 
-.node-tips {
-  grid-column: 5 / 7;
+.node-dashboard {
+  grid-column: 3 / 5;
+  grid-row: 2;
+}
+
+.node-kpi-box {
+  grid-column: 3 / 5;
+  grid-row: 3;
+}
+
+.node-create-map {
+  grid-column: 3 / 5;
+  grid-row: 4;
+}
+
+.node-practice-box {
+  grid-column: 3 / 5;
+  grid-row: 5;
 }
 
 .node-simulate {
-  grid-column: 1 / 3;
+  grid-column: 3 / 5;
+  grid-row: 6;
 }
 
 .node-approve {
   grid-column: 3 / 5;
+  grid-row: 7;
 }
 
 .node-release {
-  grid-column: 5 / 7;
-}
-
-.node-simulate.is-complete::after,
-.node-approve.is-complete::after {
-  content: "";
-  position: absolute;
-  left: 100%;
-  top: 50%;
-  z-index: 1;
-  width: 18px;
-  height: 3px;
-  border-radius: 999px;
-  background: linear-gradient(90deg, #38bdf8, #2563eb);
-  transform: translateY(-50%);
-  animation: release-bridge 360ms cubic-bezier(0.16, 1, 0.3, 1) both;
+  grid-column: 3 / 5;
+  grid-row: 8;
 }
 
 .icon-tile,
@@ -1256,6 +1393,21 @@ button {
   padding: 12px 14px;
 }
 
+.practice-card.is-selected {
+  border-color: rgba(37, 99, 235, 0.36);
+  box-shadow:
+    0 0 0 3px rgba(219, 234, 254, 0.78),
+    0 14px 30px rgba(37, 99, 235, 0.12);
+}
+
+.practice-content-box {
+  border: 1px solid rgba(147, 197, 253, 0.3);
+  border-radius: 18px;
+  padding: 12px;
+  background: rgba(248, 251, 255, 0.76);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.7);
+}
+
 .question-card {
   position: relative;
   padding: 13px;
@@ -1536,12 +1688,17 @@ button {
   }
 
   .journey-grid {
-    grid-template-rows: repeat(6, 80px);
+    grid-template-rows: repeat(8, 72px);
     gap: 16px 12px;
   }
 
   .learner-grid {
     gap: 12px;
+  }
+
+  .member-score-banner {
+    align-items: flex-start;
+    flex-direction: column;
   }
 
   .profile-node-stage {
@@ -1593,20 +1750,6 @@ button {
   }
 }
 
-@keyframes release-bridge {
-  from {
-    opacity: 0;
-    transform: translateY(-50%) scaleX(0.2);
-    transform-origin: left center;
-  }
-
-  to {
-    opacity: 1;
-    transform: translateY(-50%) scaleX(1);
-    transform-origin: left center;
-  }
-}
-
 @keyframes panel-reveal {
   from {
     opacity: 0;
@@ -1642,12 +1785,6 @@ button {
     align-items: stretch;
   }
 
-  .connection-layer {
-    inset: 20px;
-    width: calc(100% - 40px);
-    height: calc(100% - 40px);
-  }
-
   .journey-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
     grid-template-rows: none;
@@ -1675,33 +1812,25 @@ button {
     min-height: 72px;
   }
 
-  .node-profile,
-  .node-ability,
+  .node-team,
+  .node-member-a,
+  .node-member-b,
+  .node-member-c,
+  .node-skill,
+  .node-outcome,
+  .node-dashboard,
+  .node-kpi-box,
+  .node-create-map,
+  .node-practice-box,
   .node-simulate,
   .node-approve,
   .node-release {
     grid-column: 1 / -1;
+    grid-row: auto;
   }
 
-  .node-outcome,
-  .node-kpi,
-  .node-quiz {
-    grid-column: 1 / 2;
-  }
-
-  .node-skill,
-  .node-pathway,
-  .node-flashcard,
-  .node-tips {
-    grid-column: auto;
-  }
-
-  .connection-layer {
-    display: none;
-  }
-
-  .node-simulate.is-complete::after,
-  .node-approve.is-complete::after {
+  .journey-node.has-side-connector::before,
+  .journey-node.has-down-connector::before {
     display: none;
   }
 

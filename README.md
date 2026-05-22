@@ -1,6 +1,6 @@
 # Nanomate Learning Map
 
-Interactive learner map prototype for the Nanomate KPI, practice, and release flow.
+Interactive team learning map prototype for the Nanomate score, KPI, practice, approval, and release flow.
 
 ## Local Development
 
