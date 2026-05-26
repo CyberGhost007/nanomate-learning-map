@@ -8,6 +8,7 @@ import {
   Check,
   CheckCircle2,
   MapIcon,
+  RotateCcw,
   Target,
   TrendingUp,
   UserRound,
@@ -137,20 +138,6 @@ const flow = [
   }
 ];
 
-const finalLevel = 9;
-const phaseLabels = [
-  "Team Ability",
-  "Member Scores",
-  "Scores",
-  "Dashboard",
-  "KPIs",
-  "Create Map",
-  "Practice Box",
-  "Simulation",
-  "Approval",
-  "Released"
-];
-
 const learners = [
   {
     id: "member-a",
@@ -209,9 +196,8 @@ const learners = [
 function App() {
   const [level, setLevel] = useState(0);
   const [selectedLearner, setSelectedLearner] = useState(null);
+  const [isContextualView, setIsContextualView] = useState(true);
 
-  const phase = phaseLabels[Math.min(level, phaseLabels.length - 1)];
-  const completion = Math.round((Math.min(level, finalLevel) / finalLevel) * 100);
   const activeNode = useMemo(() => {
     if (level >= 9) return "released";
     if (level >= 8) return "approve";
@@ -246,11 +232,22 @@ function App() {
     setLevel((current) => Math.max(0, current - 1));
   };
 
+  const restartFlow = () => {
+    setSelectedLearner(null);
+    setLevel(0);
+  };
+
   return (
     <main className="app-shell">
       <div className="product-frame">
-        <TopBar phase={phase} completion={completion} canGoBack={level > 0} onBack={goBack} />
-        <section className="workspace" aria-label="Nanomate team learning map">
+        <TopBar
+          canGoBack={level > 0}
+          isContextualView={isContextualView}
+          onBack={goBack}
+          onRestart={restartFlow}
+          onToggleViewMode={() => setIsContextualView((current) => !current)}
+        />
+        <section className="workspace" aria-label="Microability team learning map">
           <JourneyMap
             level={level}
             activeNode={activeNode}
@@ -264,31 +261,47 @@ function App() {
   );
 }
 
-function TopBar({ phase, completion, canGoBack, onBack }) {
+function TopBar({
+  canGoBack,
+  isContextualView,
+  onBack,
+  onRestart,
+  onToggleViewMode,
+}) {
   return (
     <header className="topbar">
       <div className="brand-lockup">
         <span className="brand-mark">N</span>
         <div>
-          <h1>Nanomate</h1>
-          <p>Team Learning Map</p>
+          <h1>Microability</h1>
+          <p>Outcome-led Learning</p>
         </div>
       </div>
       <div className="topbar-actions">
-        <div className="progress-card" aria-label={`Map progress ${completion}%`}>
-          <div className="progress-meta">
-            <span>{phase}</span>
-            <strong>{completion}%</strong>
-          </div>
-          <div className="progress-track">
-            <span style={{ width: `${completion}%` }} />
-          </div>
+        <div className="view-mode-toggle">
+          <span>View Mode:</span>
+          <button
+            type="button"
+            className={`view-switch ${isContextualView ? "is-on" : ""}`}
+            aria-label="Toggle contextual view mode"
+            aria-pressed={isContextualView}
+            onClick={onToggleViewMode}
+          >
+            <span />
+          </button>
+          <span>Contextual View</span>
         </div>
         {canGoBack && (
-          <button type="button" className="map-back-button" onClick={onBack}>
-            <ArrowLeft />
-            <span>Back</span>
-          </button>
+          <>
+            <button type="button" className="map-control-button" onClick={onBack}>
+              <ArrowLeft />
+              <span>Back</span>
+            </button>
+            <button type="button" className="map-control-button" onClick={onRestart}>
+              <RotateCcw />
+              <span>Restart</span>
+            </button>
+          </>
         )}
       </div>
     </header>
