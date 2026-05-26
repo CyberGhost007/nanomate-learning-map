@@ -1,17 +1,18 @@
 import React, { useLayoutEffect, useMemo, useRef, useState } from "react";
 import { createRoot } from "react-dom/client";
 import {
-  Activity,
   ArrowLeft,
   BarChart3,
   BookOpen,
   Check,
   CheckCircle2,
+  Lightbulb,
   MapIcon,
   RotateCcw,
   Target,
   TrendingUp,
   UserRound,
+  X,
 } from "lucide-react";
 import "./styles.css";
 
@@ -42,8 +43,7 @@ const flow = [
     className: "node-member-b",
     tone: "green",
     icon: UserRound,
-    title: "Rohan Score",
-    subtitle: "Highlighted"
+    title: "Rohan Score"
   },
   {
     id: "member-c-score",
@@ -60,7 +60,7 @@ const flow = [
     nextLevel: 3,
     className: "node-skill",
     tone: "green",
-    icon: Activity,
+    icon: BarChart3,
     title: "Skill-Will Score"
   },
   {
@@ -88,7 +88,7 @@ const flow = [
     className: "node-kpi-box",
     tone: "violet",
     icon: BarChart3,
-    title: "4 KPIs in One Box"
+    title: "KPIs"
   },
   {
     id: "create",
@@ -97,7 +97,7 @@ const flow = [
     className: "node-create-map",
     tone: "sky",
     icon: MapIcon,
-    title: "Create Map"
+    title: "Create Map - (9 week plan)"
   },
   {
     id: "practice",
@@ -106,8 +106,7 @@ const flow = [
     className: "node-practice-box",
     tone: "gold",
     icon: BookOpen,
-    title: "Quiz, Flashcard & Tip",
-    subtitle: "1 practice box"
+    title: "Quiz, Flashcard & Tip"
   },
   {
     id: "simulate",
@@ -134,7 +133,7 @@ const flow = [
     className: "node-release",
     tone: "magenta",
     icon: MapIcon,
-    title: "Map Released & Nudges"
+    title: "Map Released & Performance Nudges"
   }
 ];
 
@@ -193,10 +192,85 @@ const learners = [
   }
 ];
 
+const contextualNodeDetails = {
+  team: {
+    primary: "e.g., 85/100 - Marketing Team",
+    metric: "Team Average: 85"
+  },
+  "member-a-score": {
+    primary: "e.g., 92/100",
+    metric: "Performance: Excellent"
+  },
+  "member-b-score": {
+    primary: "e.g., 58/100",
+    metric: "Performance: Poor",
+    severity: "danger"
+  },
+  "member-c-score": {
+    primary: "e.g., 88/100",
+    metric: "Performance: Very Good"
+  },
+  skill: {
+    primary: "e.g., Skill: 85, Will: 71",
+    metric: "Combined: 78"
+  },
+  outcome: {
+    primary: "e.g., 82/100",
+    metric: "Target: 85"
+  },
+  kpis: {
+    items: [
+      { label: "TAT", value: "58%" },
+      { label: "Deposit Accuracy", value: "64%" },
+      { label: "Period Basis", value: "61%" },
+      { label: "FTR", value: "72%" }
+    ]
+  }
+};
+
+const compactKpiDetails = {
+  variant: "placeholder",
+  items: [
+    { label: "KPI-1" },
+    { label: "KPI-2" },
+    { label: "KPI-3" },
+    { label: "KPI-4" }
+  ]
+};
+
+const practiceTabs = [
+  {
+    id: "quiz",
+    label: "Quiz",
+    icon: CheckCircle2,
+    title: "TAT confidence check",
+    body: "Which action best improves Rohan's TAT score this week?",
+    points: ["Prioritize period-basis questions", "Review deposit fields before submission", "Practice one timed claims scenario"]
+  },
+  {
+    id: "flashcard",
+    label: "Flashcard",
+    icon: BookOpen,
+    title: "Period basis",
+    body: "Period basis decides which claim window the deposit belongs to.",
+    points: ["Confirm the date range", "Match it with the claim rule", "Check the exception note before closing"]
+  },
+  {
+    id: "tip",
+    label: "Tip",
+    icon: Lightbulb,
+    title: "Coaching tip",
+    body: "Ask Rohan to explain the deposit decision in one sentence before submitting.",
+    points: ["Keep the prompt short", "Use the same example twice", "Record confidence after each attempt"]
+  }
+];
+
 function App() {
   const [level, setLevel] = useState(0);
   const [selectedLearner, setSelectedLearner] = useState(null);
-  const [isContextualView, setIsContextualView] = useState(true);
+  const [isContextualView, setIsContextualView] = useState(false);
+  const [isPracticePanelOpen, setIsPracticePanelOpen] = useState(false);
+  const [activePracticeTab, setActivePracticeTab] = useState("quiz");
 
   const activeNode = useMemo(() => {
     if (level >= 9) return "released";
@@ -225,6 +299,8 @@ function App() {
   const goBack = () => {
     if (level <= 0) return;
 
+    setIsPracticePanelOpen(false);
+
     if (level <= 2) {
       setSelectedLearner(null);
     }
@@ -234,7 +310,19 @@ function App() {
 
   const restartFlow = () => {
     setSelectedLearner(null);
+    setIsPracticePanelOpen(false);
+    setActivePracticeTab("quiz");
     setLevel(0);
+  };
+
+  const openPracticePanel = () => {
+    setActivePracticeTab("quiz");
+    setIsPracticePanelOpen(true);
+  };
+
+  const continueToSimulate = () => {
+    setIsPracticePanelOpen(false);
+    reveal(7);
   };
 
   return (
@@ -247,14 +335,27 @@ function App() {
           onRestart={restartFlow}
           onToggleViewMode={() => setIsContextualView((current) => !current)}
         />
-        <section className="workspace" aria-label="Microability team learning map">
+        <section
+          className={`workspace ${isPracticePanelOpen ? "has-side-panel" : ""}`}
+          aria-label="Microability team learning map"
+        >
           <JourneyMap
+            isContextualView={isContextualView}
             level={level}
             activeNode={activeNode}
             selectedLearner={selectedLearner}
             chooseLearner={chooseLearner}
+            openPracticePanel={openPracticePanel}
             reveal={reveal}
           />
+          {isPracticePanelOpen && (
+            <PracticePanel
+              activeTab={activePracticeTab}
+              onClose={() => setIsPracticePanelOpen(false)}
+              onSelectTab={setActivePracticeTab}
+              onSimulate={continueToSimulate}
+            />
+          )}
         </section>
       </div>
     </main>
@@ -309,10 +410,12 @@ function TopBar({
 }
 
 function JourneyMap({
+  isContextualView,
   level,
   activeNode,
   selectedLearner,
   chooseLearner,
+  openPracticePanel,
   reveal,
 }) {
   const gridRef = useRef(null);
@@ -341,13 +444,15 @@ function JourneyMap({
       observer.disconnect();
       window.removeEventListener("resize", updateConnectors);
     };
-  }, [level, visibleFlow.length]);
+  }, [isContextualView, level, visibleFlow.length]);
 
   return (
     <section className="journey-map">
       <div
         ref={gridRef}
-        className={`journey-grid is-level-${level} ${selectedLearner ? "has-selected-learner" : ""}`}
+        className={`journey-grid is-level-${level} ${
+          isContextualView ? "is-contextual-view" : ""
+        } ${selectedLearner ? "has-selected-learner" : ""}`}
       >
         <ConnectorLayer segments={connectorSegments} />
         {visibleFlow.map((node) => {
@@ -359,8 +464,10 @@ function JourneyMap({
               node={node}
               active={node.id === activeNode}
               completed={completed}
+              contextual={isContextualView}
               selected={selectedLearner?.id === "member-b" && node.id === "member-b-score"}
               locked={level < node.unlocksAt}
+              onOpenPracticePanel={openPracticePanel}
               onLearnerSelect={chooseLearner}
               reveal={reveal}
             />
@@ -397,8 +504,8 @@ function ConnectorLayer({ segments }) {
 function buildConnectorSegments(gridElement, level) {
   const gridRect = gridElement.getBoundingClientRect();
   const segments = [];
-  const thickness = 5;
-  const overlap = 8;
+  const thickness = 4;
+  const overlap = 2;
 
   const pointFor = (nodeId, edge = "bottom") => {
     const node = flow.find((item) => item.id === nodeId);
@@ -519,12 +626,34 @@ function isNodeComplete(node, level, selectedLearner) {
   return level > node.unlocksAt;
 }
 
-function JourneyNode({ node, active, completed, selected, locked, reveal, onLearnerSelect }) {
+function JourneyNode({
+  node,
+  active,
+  completed,
+  contextual,
+  selected,
+  locked,
+  onOpenPracticePanel,
+  reveal,
+  onLearnerSelect,
+}) {
   const Icon = node.icon;
   const learner = getLearnerForNode(node.id);
+  const contextualDetail = node.id === "kpis"
+    ? contextual
+      ? contextualNodeDetails.kpis
+      : compactKpiDetails
+    : contextual
+      ? contextualNodeDetails[node.id]
+      : null;
   const handleClick = () => {
     if (learner) {
       onLearnerSelect(learner);
+      return;
+    }
+
+    if (node.id === "practice") {
+      onOpenPracticePanel();
       return;
     }
 
@@ -547,8 +676,35 @@ function JourneyNode({ node, active, completed, selected, locked, reveal, onLear
       <span className="node-copy">
         <strong>{node.title}</strong>
         {node.subtitle && <span>{node.subtitle}</span>}
+        {contextualDetail && (
+          <span
+            className={`context-detail-card ${
+              contextualDetail.severity ? `is-${contextualDetail.severity}` : ""
+            } ${
+              contextualDetail.variant ? `is-${contextualDetail.variant}` : ""
+            }`}
+          >
+            {contextualDetail.items ? (
+              <span className="kpi-context-list">
+                {contextualDetail.items.map((item) => (
+                  <span key={item.label}>
+                    <strong>{item.label}</strong>
+                    {item.value && <em>{item.value}</em>}
+                  </span>
+                ))}
+              </span>
+            ) : (
+              <>
+                <strong>{contextualDetail.primary}</strong>
+                <span>
+                  <BarChart3 />
+                  {contextualDetail.metric}
+                </span>
+              </>
+            )}
+          </span>
+        )}
       </span>
-      {node.id === "kpis" && <KpiMiniRow />}
       {(completed || selected) && (
         <span className="done-mark" aria-label="Completed">
           <Check size={15} />
@@ -558,13 +714,62 @@ function JourneyNode({ node, active, completed, selected, locked, reveal, onLear
   );
 }
 
-function KpiMiniRow() {
+function PracticePanel({
+  activeTab,
+  onClose,
+  onSelectTab,
+  onSimulate,
+}) {
+  const activePractice = practiceTabs.find((tab) => tab.id === activeTab) ?? practiceTabs[0];
+  const ActiveIcon = activePractice.icon;
+
   return (
-    <span className="kpi-mini-row" aria-hidden="true">
-      <span>KPI 1</span>
-      <span>KPI 2</span>
-      <span>KPI 3</span>
-    </span>
+    <aside className="practice-drawer" aria-label="Practice panel">
+      <div className="practice-drawer-header">
+        <div>
+          <h2>Quiz, Flashcard & Tip</h2>
+          <p>Rohan focus practice</p>
+        </div>
+        <button type="button" className="drawer-icon-button" aria-label="Close practice panel" onClick={onClose}>
+          <X />
+        </button>
+      </div>
+
+      <div className="practice-tabs" role="tablist" aria-label="Practice options">
+        {practiceTabs.map((tab) => (
+          <button
+            key={tab.id}
+            type="button"
+            role="tab"
+            aria-selected={tab.id === activeTab}
+            className={tab.id === activeTab ? "is-selected" : ""}
+            onClick={() => onSelectTab(tab.id)}
+          >
+            {tab.label}
+          </button>
+        ))}
+      </div>
+
+      <section className="practice-tab-panel" role="tabpanel">
+        <span className="practice-panel-icon">
+          <ActiveIcon />
+        </span>
+        <div>
+          <h3>{activePractice.title}</h3>
+          <p>{activePractice.body}</p>
+        </div>
+        <div className="practice-point-list">
+          {activePractice.points.map((point) => (
+            <span key={point}>{point}</span>
+          ))}
+        </div>
+      </section>
+
+      <button type="button" className="simulate-action" onClick={onSimulate}>
+        <TrendingUp />
+        <span>Simulate</span>
+      </button>
+    </aside>
   );
 }
 
