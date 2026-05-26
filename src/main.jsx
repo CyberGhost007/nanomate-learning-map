@@ -97,7 +97,7 @@ const flow = [
     className: "node-create-map",
     tone: "sky",
     icon: MapIcon,
-    title: "Create Map - (9 week plan)"
+    title: "Create MAP for TAT - (9 Week Plan)"
   },
   {
     id: "practice",
@@ -194,33 +194,37 @@ const learners = [
 
 const contextualNodeDetails = {
   team: {
-    primary: "e.g., 85/100 - Marketing Team",
-    metric: "Team Average: 85"
+    primary: "Team average: 85/100"
   },
   "member-a-score": {
-    primary: "e.g., 92/100",
+    primary: "92/100",
     metric: "Performance: Excellent"
   },
   "member-b-score": {
-    primary: "e.g., 58/100",
+    primary: "58/100",
     metric: "Performance: Poor",
     severity: "danger"
   },
   "member-c-score": {
-    primary: "e.g., 88/100",
+    primary: "88/100",
     metric: "Performance: Very Good"
   },
   skill: {
-    primary: "e.g., Skill: 85, Will: 71",
+    primary: "Skill: 85, Will: 71",
     metric: "Combined: 78"
   },
   outcome: {
-    primary: "e.g., 82/100",
-    metric: "Target: 85"
+    primary: "82/100"
+  },
+  simulate: {
+    variant: "simulation",
+    lift: "5%",
+    primary: "Improvement in TAT over 9 Weeks",
+    confidence: "75%"
   },
   kpis: {
     items: [
-      { label: "TAT", value: "58%" },
+      { label: "TAT", value: "58%", severity: "danger" },
       { label: "Deposit Accuracy", value: "64%" },
       { label: "Period Basis", value: "61%" },
       { label: "FTR", value: "72%" }
@@ -684,10 +688,25 @@ function JourneyNode({
               contextualDetail.variant ? `is-${contextualDetail.variant}` : ""
             }`}
           >
-            {contextualDetail.items ? (
+            {contextualDetail.variant === "simulation" ? (
+              <span className="simulation-context">
+                <span className="simulation-impact">
+                  <strong>{contextualDetail.lift}</strong>
+                  <span>{contextualDetail.primary}</span>
+                </span>
+                <span className="simulation-confidence">
+                  <span>AI</span>
+                  <strong>{contextualDetail.confidence}</strong>
+                  <em>confidence</em>
+                </span>
+              </span>
+            ) : contextualDetail.items ? (
               <span className="kpi-context-list">
                 {contextualDetail.items.map((item) => (
-                  <span key={item.label}>
+                  <span
+                    key={item.label}
+                    className={item.severity ? `is-${item.severity}` : undefined}
+                  >
                     <strong>{item.label}</strong>
                     {item.value && <em>{item.value}</em>}
                   </span>
@@ -696,10 +715,12 @@ function JourneyNode({
             ) : (
               <>
                 <strong>{contextualDetail.primary}</strong>
-                <span>
-                  <BarChart3 />
-                  {contextualDetail.metric}
-                </span>
+                {contextualDetail.metric && (
+                  <span>
+                    <BarChart3 />
+                    {contextualDetail.metric}
+                  </span>
+                )}
               </>
             )}
           </span>
