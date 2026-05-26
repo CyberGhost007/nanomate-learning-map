@@ -726,10 +726,7 @@ function PracticePanel({
   return (
     <aside className="practice-drawer" aria-label="Practice panel">
       <div className="practice-drawer-header">
-        <div>
-          <h2>Quiz, Flashcard & Tip</h2>
-          <p>Rohan focus practice</p>
-        </div>
+        <h2>Rohan Focus Practice</h2>
         <button type="button" className="drawer-icon-button" aria-label="Close practice panel" onClick={onClose}>
           <X />
         </button>
