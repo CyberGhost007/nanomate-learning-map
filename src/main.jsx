@@ -76,7 +76,34 @@ const flow = [
     id: "dashboard",
     unlocksAt: 3,
     nextLevel: 4,
-    className: "node-dashboard",
+    className: "node-learning-dashboard",
+    tone: "blue",
+    icon: BarChart3,
+    title: "Learning Dashboard"
+  },
+  {
+    id: "skill-breakdown",
+    unlocksAt: 4,
+    nextLevel: 5,
+    className: "node-skill-breakdown",
+    tone: "violet",
+    icon: BookOpen,
+    title: "Knowledge, Behavior, Skill"
+  },
+  {
+    id: "learning-simulation",
+    unlocksAt: 5,
+    nextLevel: 6,
+    className: "node-learning-simulation",
+    tone: "sky",
+    icon: TrendingUp,
+    title: "Simulation"
+  },
+  {
+    id: "performance-dashboard",
+    unlocksAt: 3,
+    nextLevel: 4,
+    className: "node-performance-dashboard",
     tone: "blue",
     icon: BarChart3,
     title: "Performance Dashboard"
@@ -88,34 +115,53 @@ const flow = [
     className: "node-kpi-box",
     tone: "violet",
     icon: BarChart3,
-    title: "KPIs"
+    title: "KPI Scores",
+    subtitle: "KPI-1: 3 | KPI-2: 4"
+  },
+  {
+    id: "prioritization",
+    unlocksAt: 5,
+    nextLevel: 6,
+    className: "node-prioritization",
+    tone: "gold",
+    icon: Target,
+    title: "Prioritization"
   },
   {
     id: "create",
-    unlocksAt: 5,
-    nextLevel: 6,
+    unlocksAt: 6,
+    nextLevel: 7,
     className: "node-create-map",
     tone: "sky",
     icon: MapIcon,
     title: "Create MAP for TAT - (9 Week Plan)"
   },
   {
-    id: "practice",
-    unlocksAt: 6,
-    nextLevel: 7,
-    className: "node-practice-box",
-    tone: "gold",
-    icon: BookOpen,
-    title: "Quiz, Flashcard & Tip"
-  },
-  {
-    id: "simulate",
+    id: "practice-quiz",
     unlocksAt: 7,
     nextLevel: 8,
-    className: "node-simulate",
-    tone: "blue",
-    icon: TrendingUp,
-    title: "Simulate"
+    className: "node-practice-quiz",
+    tone: "gold",
+    icon: CheckCircle2,
+    title: "Quiz"
+  },
+  {
+    id: "practice-flashcard",
+    unlocksAt: 7,
+    nextLevel: 8,
+    className: "node-practice-flashcard",
+    tone: "orange",
+    icon: BookOpen,
+    title: "Flashcard"
+  },
+  {
+    id: "practice-tips",
+    unlocksAt: 7,
+    nextLevel: 8,
+    className: "node-practice-tips",
+    tone: "green",
+    icon: Lightbulb,
+    title: "Tips"
   },
   {
     id: "approve",
@@ -216,30 +262,41 @@ const contextualNodeDetails = {
   outcome: {
     primary: "82/100"
   },
-  simulate: {
+  dashboard: {
+    primary: "Readiness view",
+    metric: "Skill + will signals"
+  },
+  "skill-breakdown": {
+    items: [
+      { label: "Knowledge", value: "82" },
+      { label: "Behavior", value: "76" },
+      { label: "Skill", value: "85" }
+    ]
+  },
+  "learning-simulation": {
     variant: "simulation",
     lift: "5%",
     primary: "Improvement in TAT over 9 Weeks",
     confidence: "75%"
   },
+  "performance-dashboard": {
+    primary: "KPI trend view",
+    metric: "TAT outcome signals"
+  },
   kpis: {
     items: [
-      { label: "TAT", value: "58%", severity: "danger" },
-      { label: "Deposit Accuracy", value: "64%" },
-      { label: "Period Basis", value: "61%" },
-      { label: "FTR", value: "72%" }
+      { label: "KPI-1", value: "3", severity: "danger" },
+      { label: "KPI-2", value: "4" }
     ]
+  },
+  prioritization: {
+    primary: "TAT selected",
+    metric: "Highest-impact coaching path"
+  },
+  approve: {
+    primary: "Manager review ready",
+    metric: "TAT map approved for release"
   }
-};
-
-const compactKpiDetails = {
-  variant: "placeholder",
-  items: [
-    { label: "KPI-1" },
-    { label: "KPI-2" },
-    { label: "KPI-3" },
-    { label: "KPI-4" }
-  ]
 };
 
 const practiceTabs = [
@@ -260,8 +317,8 @@ const practiceTabs = [
     points: ["Confirm the date range", "Match it with the claim rule", "Check the exception note before closing"]
   },
   {
-    id: "tip",
-    label: "Tip",
+    id: "tips",
+    label: "Tips",
     icon: Lightbulb,
     title: "Coaching tip",
     body: "Ask Rohan to explain the deposit decision in one sentence before submitting.",
@@ -269,24 +326,31 @@ const practiceTabs = [
   }
 ];
 
+const practiceNodeMap = {
+  "practice-quiz": "quiz",
+  "practice-flashcard": "flashcard",
+  "practice-tips": "tips"
+};
+
 function App() {
   const [level, setLevel] = useState(0);
   const [selectedLearner, setSelectedLearner] = useState(null);
   const [isContextualView, setIsContextualView] = useState(false);
   const [isPracticePanelOpen, setIsPracticePanelOpen] = useState(false);
   const [activePracticeTab, setActivePracticeTab] = useState("quiz");
+  const [selectedPracticeId, setSelectedPracticeId] = useState(null);
 
-  const activeNode = useMemo(() => {
-    if (level >= 9) return "released";
-    if (level >= 8) return "approve";
-    if (level >= 7) return "simulate";
-    if (level >= 6) return "practice";
-    if (level >= 5) return "create";
-    if (level >= 4) return "kpis";
-    if (level >= 3) return "dashboard";
-    if (level >= 2) return "skill";
-    if (level >= 1) return "member-b-score";
-    return "team";
+  const activeNodeIds = useMemo(() => {
+    if (level >= 9) return ["released"];
+    if (level >= 8) return ["approve"];
+    if (level >= 7) return ["practice-quiz", "practice-flashcard", "practice-tips"];
+    if (level >= 6) return ["create"];
+    if (level >= 5) return ["learning-simulation", "prioritization"];
+    if (level >= 4) return ["skill-breakdown", "kpis"];
+    if (level >= 3) return ["dashboard", "performance-dashboard"];
+    if (level >= 2) return ["skill", "outcome"];
+    if (level >= 1) return ["member-b-score"];
+    return ["team"];
   }, [level]);
 
   const reveal = (nextLevel) => {
@@ -305,6 +369,10 @@ function App() {
 
     setIsPracticePanelOpen(false);
 
+    if (level <= 8) {
+      setSelectedPracticeId(null);
+    }
+
     if (level <= 2) {
       setSelectedLearner(null);
     }
@@ -316,17 +384,19 @@ function App() {
     setSelectedLearner(null);
     setIsPracticePanelOpen(false);
     setActivePracticeTab("quiz");
+    setSelectedPracticeId(null);
     setLevel(0);
   };
 
-  const openPracticePanel = () => {
-    setActivePracticeTab("quiz");
+  const openPracticePanel = (practiceId) => {
+    setActivePracticeTab(practiceId);
     setIsPracticePanelOpen(true);
   };
 
-  const continueToSimulate = () => {
+  const continueToReview = () => {
+    setSelectedPracticeId(activePracticeTab);
     setIsPracticePanelOpen(false);
-    reveal(7);
+    reveal(8);
   };
 
   return (
@@ -346,8 +416,9 @@ function App() {
           <JourneyMap
             isContextualView={isContextualView}
             level={level}
-            activeNode={activeNode}
+            activeNodeIds={activeNodeIds}
             selectedLearner={selectedLearner}
+            selectedPracticeId={selectedPracticeId}
             chooseLearner={chooseLearner}
             openPracticePanel={openPracticePanel}
             reveal={reveal}
@@ -356,8 +427,7 @@ function App() {
             <PracticePanel
               activeTab={activePracticeTab}
               onClose={() => setIsPracticePanelOpen(false)}
-              onSelectTab={setActivePracticeTab}
-              onSimulate={continueToSimulate}
+              onNext={continueToReview}
             />
           )}
         </section>
@@ -416,8 +486,9 @@ function TopBar({
 function JourneyMap({
   isContextualView,
   level,
-  activeNode,
+  activeNodeIds,
   selectedLearner,
+  selectedPracticeId,
   chooseLearner,
   openPracticePanel,
   reveal,
@@ -431,7 +502,7 @@ function JourneyMap({
     if (!gridElement) return undefined;
 
     const updateConnectors = () => {
-      setConnectorSegments(buildConnectorSegments(gridElement, level));
+      setConnectorSegments(buildConnectorSegments(gridElement, level, selectedPracticeId));
     };
 
     updateConnectors();
@@ -448,7 +519,7 @@ function JourneyMap({
       observer.disconnect();
       window.removeEventListener("resize", updateConnectors);
     };
-  }, [isContextualView, level, visibleFlow.length]);
+  }, [isContextualView, level, selectedPracticeId, visibleFlow.length]);
 
   return (
     <section className="journey-map">
@@ -460,13 +531,13 @@ function JourneyMap({
       >
         <ConnectorLayer segments={connectorSegments} />
         {visibleFlow.map((node) => {
-          const completed = isNodeComplete(node, level, selectedLearner);
+          const completed = isNodeComplete(node, level, selectedLearner, selectedPracticeId);
 
           return (
             <JourneyNode
               key={node.id}
               node={node}
-              active={node.id === activeNode}
+              active={activeNodeIds.includes(node.id)}
               completed={completed}
               contextual={isContextualView}
               selected={selectedLearner?.id === "member-b" && node.id === "member-b-score"}
@@ -505,7 +576,7 @@ function ConnectorLayer({ segments }) {
   );
 }
 
-function buildConnectorSegments(gridElement, level) {
+function buildConnectorSegments(gridElement, level, selectedPracticeId) {
   const gridRect = gridElement.getBoundingClientRect();
   const segments = [];
   const thickness = 4;
@@ -573,6 +644,25 @@ function buildConnectorSegments(gridElement, level) {
     });
   };
 
+  const addJoin = (sourceIds, targetId, key) => {
+    const sources = sourceIds.map((id) => pointFor(id, "bottom")).filter(Boolean);
+    const target = pointFor(targetId, "top");
+
+    if (sources.length === 0 || !target) return;
+
+    const lowestSourceY = Math.max(...sources.map((source) => source.y));
+    const midY = lowestSourceY + Math.max(12, (target.y - lowestSourceY) / 2);
+    const allX = [...sources.map((source) => source.x), target.x];
+    const minX = Math.min(...allX);
+    const maxX = Math.max(...allX);
+
+    sources.forEach((source, index) => {
+      addVertical(source.x, source.y - overlap, midY, `${key}-source-${index}`);
+    });
+    addHorizontal(minX, maxX, midY, `${key}-bar`);
+    addVertical(target.x, midY, target.y + overlap, `${key}-target`);
+  };
+
   const addLink = (sourceId, targetId, key) => {
     const source = pointFor(sourceId, "bottom");
     const target = pointFor(targetId, "top");
@@ -598,21 +688,45 @@ function buildConnectorSegments(gridElement, level) {
     addBranch("member-b-score", ["skill", "outcome"], "rohan-to-scores");
   }
 
-  const downstreamNodes = ["outcome", "dashboard", "kpis", "create", "practice", "simulate", "approve", "released"];
-  downstreamNodes
-    .filter((nodeId) => flow.find((node) => node.id === nodeId)?.unlocksAt <= level)
-    .forEach((nodeId, index, visibleNodes) => {
-      const nextNodeId = visibleNodes[index + 1];
+  if (level >= 3) {
+    addLink("skill", "dashboard", "skill-to-learning-dashboard");
+    addLink("outcome", "performance-dashboard", "outcome-to-performance-dashboard");
+  }
 
-      if (nextNodeId) {
-        addLink(nodeId, nextNodeId, `${nodeId}-to-${nextNodeId}`);
-      }
-    });
+  if (level >= 4) {
+    addLink("dashboard", "skill-breakdown", "learning-dashboard-to-skill-breakdown");
+    addLink("performance-dashboard", "kpis", "performance-dashboard-to-kpis");
+  }
+
+  if (level >= 5) {
+    addLink("skill-breakdown", "learning-simulation", "skill-breakdown-to-learning-simulation");
+    addLink("kpis", "prioritization", "kpis-to-prioritization");
+  }
+
+  if (level >= 6) {
+    addJoin(["learning-simulation", "prioritization"], "create", "branches-to-create-map");
+  }
+
+  if (level >= 7) {
+    addBranch("create", ["practice-quiz", "practice-flashcard", "practice-tips"], "create-to-practice");
+  }
+
+  if (level >= 8) {
+    const selectedPracticeNode = Object.entries(practiceNodeMap).find(([, practiceId]) => (
+      practiceId === selectedPracticeId
+    ))?.[0] ?? "practice-quiz";
+
+    addLink(selectedPracticeNode, "approve", `${selectedPracticeNode}-to-approve`);
+  }
+
+  if (level >= 9) {
+    addLink("approve", "released", "approve-to-released");
+  }
 
   return segments;
 }
 
-function isNodeComplete(node, level, selectedLearner) {
+function isNodeComplete(node, level, selectedLearner, selectedPracticeId) {
   const learner = getLearnerForNode(node.id);
 
   if (node.id === "team") {
@@ -623,8 +737,28 @@ function isNodeComplete(node, level, selectedLearner) {
     return selectedLearner?.id === learner.id;
   }
 
-  if (node.id === "skill" || node.id === "outcome") {
-    return level >= 3;
+  const practiceId = practiceNodeMap[node.id];
+
+  if (practiceId) {
+    return level >= 8 && selectedPracticeId === practiceId;
+  }
+
+  if (
+    node.id === "skill" ||
+    node.id === "outcome" ||
+    node.id === "dashboard" ||
+    node.id === "performance-dashboard"
+  ) {
+    return level > node.unlocksAt;
+  }
+
+  if (
+    node.id === "skill-breakdown" ||
+    node.id === "kpis" ||
+    node.id === "learning-simulation" ||
+    node.id === "prioritization"
+  ) {
+    return level > node.unlocksAt;
   }
 
   return level > node.unlocksAt;
@@ -643,21 +777,16 @@ function JourneyNode({
 }) {
   const Icon = node.icon;
   const learner = getLearnerForNode(node.id);
-  const contextualDetail = node.id === "kpis"
-    ? contextual
-      ? contextualNodeDetails.kpis
-      : compactKpiDetails
-    : contextual
-      ? contextualNodeDetails[node.id]
-      : null;
+  const practiceId = practiceNodeMap[node.id];
+  const contextualDetail = contextual ? contextualNodeDetails[node.id] : null;
   const handleClick = () => {
     if (learner) {
       onLearnerSelect(learner);
       return;
     }
 
-    if (node.id === "practice") {
-      onOpenPracticePanel();
+    if (practiceId) {
+      onOpenPracticePanel(practiceId);
       return;
     }
 
@@ -738,8 +867,7 @@ function JourneyNode({
 function PracticePanel({
   activeTab,
   onClose,
-  onSelectTab,
-  onSimulate,
+  onNext,
 }) {
   const activePractice = practiceTabs.find((tab) => tab.id === activeTab) ?? practiceTabs[0];
   const ActiveIcon = activePractice.icon;
@@ -747,28 +875,16 @@ function PracticePanel({
   return (
     <aside className="practice-drawer" aria-label="Practice panel">
       <div className="practice-drawer-header">
-        <h2>Rohan Focus Practice</h2>
+        <div>
+          <h2>Rohan Focus Practice</h2>
+          <p>{activePractice.label}</p>
+        </div>
         <button type="button" className="drawer-icon-button" aria-label="Close practice panel" onClick={onClose}>
           <X />
         </button>
       </div>
 
-      <div className="practice-tabs" role="tablist" aria-label="Practice options">
-        {practiceTabs.map((tab) => (
-          <button
-            key={tab.id}
-            type="button"
-            role="tab"
-            aria-selected={tab.id === activeTab}
-            className={tab.id === activeTab ? "is-selected" : ""}
-            onClick={() => onSelectTab(tab.id)}
-          >
-            {tab.label}
-          </button>
-        ))}
-      </div>
-
-      <section className="practice-tab-panel" role="tabpanel">
+      <section className="practice-tab-panel" aria-label={`${activePractice.label} practice`}>
         <span className="practice-panel-icon">
           <ActiveIcon />
         </span>
@@ -783,9 +899,9 @@ function PracticePanel({
         </div>
       </section>
 
-      <button type="button" className="simulate-action" onClick={onSimulate}>
+      <button type="button" className="simulate-action" onClick={onNext}>
         <TrendingUp />
-        <span>Simulate</span>
+        <span>Next</span>
       </button>
     </aside>
   );
@@ -801,4 +917,7 @@ function getLearnerForNode(nodeId) {
   return learners.find((learner) => learner.id === learnerNodeMap[nodeId]);
 }
 
-createRoot(document.getElementById("root")).render(<App />);
+const rootElement = document.getElementById("root");
+const root = globalThis.__microabilityRoot ?? createRoot(rootElement);
+globalThis.__microabilityRoot = root;
+root.render(<App />);
