@@ -322,52 +322,88 @@ const branchNodeIds = {
 };
 
 const sharedTailNodeIds = ["create", "practice", "approve", "released"];
+const branchKeys = ["skill", "outcome"];
+
+const getInitialBranchProgress = () => ({
+  skill: 0,
+  outcome: 0
+});
+
+const getStartedBranches = (branchProgress) => (
+  branchKeys.filter((branch) => branchProgress[branch] >= 3)
+);
+
+const getBranchForNode = (nodeId) => (
+  branchKeys.find((branch) => branch === nodeId || branchNodeIds[branch].includes(nodeId))
+);
 
 function App() {
   const [level, setLevel] = useState(0);
   const [selectedLearner, setSelectedLearner] = useState(null);
-  const [selectedBranch, setSelectedBranch] = useState(null);
+  const [branchProgress, setBranchProgress] = useState(getInitialBranchProgress);
   const [isContextualView, setIsContextualView] = useState(false);
   const [isPracticePanelOpen, setIsPracticePanelOpen] = useState(false);
   const [activePracticeTab, setActivePracticeTab] = useState("quiz");
+  const startedBranches = useMemo(() => getStartedBranches(branchProgress), [branchProgress]);
 
   const activeNodeIds = useMemo(() => {
-    if (level >= 9 && selectedBranch) return ["released"];
-    if (level >= 8 && selectedBranch) return ["approve"];
-    if (level >= 7 && selectedBranch) return ["practice"];
-    if (level >= 6 && selectedBranch) return ["create"];
-    if (level >= 5 && selectedBranch) {
-      return selectedBranch === "outcome" ? ["prioritization"] : ["learning-simulation"];
-    }
-    if (level >= 4 && selectedBranch) {
-      return selectedBranch === "outcome" ? ["kpis"] : ["skill-breakdown"];
-    }
-    if (level >= 3 && selectedBranch) {
-      return selectedBranch === "outcome" ? ["performance-dashboard"] : ["dashboard"];
-    }
+    const hasStartedBranch = startedBranches.length > 0;
+
+    if (level >= 9 && hasStartedBranch) return ["released"];
+    if (level >= 8 && hasStartedBranch) return ["approve"];
+    if (level >= 7 && hasStartedBranch) return ["practice"];
+    if (level >= 6 && hasStartedBranch) return ["create"];
+
+    const branchActiveNodes = startedBranches.map((branch) => {
+      if (branchProgress[branch] >= 5) {
+        return branch === "outcome" ? "prioritization" : "learning-simulation";
+      }
+
+      if (branchProgress[branch] >= 4) {
+        return branch === "outcome" ? "kpis" : "skill-breakdown";
+      }
+
+      return branch === "outcome" ? "performance-dashboard" : "dashboard";
+    });
+
+    if (branchActiveNodes.length > 0) return branchActiveNodes;
     if (level >= 2) return ["skill", "outcome"];
     if (level >= 1) return ["member-b-score"];
     return ["team"];
-  }, [level, selectedBranch]);
+  }, [branchProgress, level, startedBranches]);
 
   const reveal = (nextLevel) => {
     setLevel((current) => Math.max(current, nextLevel));
   };
 
+  const revealNode = (node) => {
+    const branch = getBranchForNode(node.id);
+
+    if (branch) {
+      setBranchProgress((current) => ({
+        ...current,
+        [branch]: Math.max(current[branch], node.nextLevel)
+      }));
+    }
+
+    reveal(node.nextLevel);
+  };
+
   const chooseLearner = (learner) => {
     if (learner.attention) {
       setSelectedLearner(learner);
-      setSelectedBranch(null);
+      setBranchProgress(getInitialBranchProgress());
       reveal(2);
     }
   };
 
   const chooseBranch = (branch) => {
     setIsPracticePanelOpen(false);
-    setSelectedBranch(branch);
-    setLevel((current) => (
-      selectedBranch && selectedBranch !== branch ? 3 : Math.max(current, 3)
-    ));
+    setBranchProgress((current) => ({
+      ...current,
+      [branch]: Math.max(current[branch], 3)
+    }));
+    setLevel((current) => Math.max(current, 3));
   };
 
   const goBack = () => {
@@ -375,20 +411,27 @@ function App() {
 
     setIsPracticePanelOpen(false);
 
-    if (level <= 3) {
-      setSelectedBranch(null);
+    const nextLevel = Math.max(0, level - 1);
+
+    if (nextLevel < 3) {
+      setBranchProgress(getInitialBranchProgress());
+    } else {
+      setBranchProgress((current) => ({
+        skill: Math.min(current.skill, nextLevel),
+        outcome: Math.min(current.outcome, nextLevel)
+      }));
     }
 
-    if (level <= 2) {
+    if (nextLevel < 2) {
       setSelectedLearner(null);
     }
 
-    setLevel((current) => Math.max(0, current - 1));
+    setLevel(nextLevel);
   };
 
   const restartFlow = () => {
     setSelectedLearner(null);
-    setSelectedBranch(null);
+    setBranchProgress(getInitialBranchProgress());
     setIsPracticePanelOpen(false);
     setActivePracticeTab("quiz");
     setLevel(0);
@@ -423,11 +466,11 @@ function App() {
             level={level}
             activeNodeIds={activeNodeIds}
             selectedLearner={selectedLearner}
-            selectedBranch={selectedBranch}
+            branchProgress={branchProgress}
             chooseBranch={chooseBranch}
             chooseLearner={chooseLearner}
             openPracticePanel={openPracticePanel}
-            reveal={reveal}
+            revealNode={revealNode}
           />
           {isPracticePanelOpen && (
             <PracticePanel
@@ -495,22 +538,22 @@ function JourneyMap({
   level,
   activeNodeIds,
   selectedLearner,
-  selectedBranch,
+  branchProgress,
   chooseBranch,
   chooseLearner,
   openPracticePanel,
-  reveal,
+  revealNode,
 }) {
   const gridRef = useRef(null);
   const [connectorSegments, setConnectorSegments] = useState([]);
-  const visibleFlow = getVisibleFlow(level, selectedBranch);
+  const visibleFlow = getVisibleFlow(level, branchProgress);
 
   useLayoutEffect(() => {
     const gridElement = gridRef.current;
     if (!gridElement) return undefined;
 
     const updateConnectors = () => {
-      setConnectorSegments(buildConnectorSegments(gridElement, level, selectedBranch));
+      setConnectorSegments(buildConnectorSegments(gridElement, level, branchProgress));
     };
 
     updateConnectors();
@@ -527,7 +570,7 @@ function JourneyMap({
       observer.disconnect();
       window.removeEventListener("resize", updateConnectors);
     };
-  }, [isContextualView, level, selectedBranch, visibleFlow.length]);
+  }, [branchProgress, isContextualView, level, visibleFlow.length]);
 
   return (
     <section className="journey-map">
@@ -539,7 +582,7 @@ function JourneyMap({
       >
         <ConnectorLayer segments={connectorSegments} />
         {visibleFlow.map((node) => {
-          const completed = isNodeComplete(node, level, selectedLearner, selectedBranch);
+          const completed = isNodeComplete(node, level, selectedLearner, branchProgress);
 
           return (
             <JourneyNode
@@ -553,7 +596,7 @@ function JourneyMap({
               onOpenPracticePanel={openPracticePanel}
               onLearnerSelect={chooseLearner}
               onBranchSelect={chooseBranch}
-              reveal={reveal}
+              onRevealNode={revealNode}
             />
           );
         })}
@@ -562,12 +605,24 @@ function JourneyMap({
   );
 }
 
-function getVisibleFlow(level, selectedBranch) {
+function getVisibleFlow(level, branchProgress) {
+  const hasStartedBranch = getStartedBranches(branchProgress).length > 0;
+
   return flow.filter((node) => {
+    if (branchNodeIds.skill.includes(node.id)) {
+      return branchProgress.skill >= node.unlocksAt;
+    }
+
+    if (branchNodeIds.outcome.includes(node.id)) {
+      return branchProgress.outcome >= node.unlocksAt;
+    }
+
+    if (sharedTailNodeIds.includes(node.id)) {
+      return hasStartedBranch && node.unlocksAt <= level;
+    }
+
     if (node.unlocksAt > level) return false;
-    if (branchNodeIds.skill.includes(node.id)) return selectedBranch === "skill";
-    if (branchNodeIds.outcome.includes(node.id)) return selectedBranch === "outcome";
-    if (sharedTailNodeIds.includes(node.id)) return Boolean(selectedBranch);
+
     return true;
   });
 }
@@ -591,7 +646,7 @@ function ConnectorLayer({ segments }) {
   );
 }
 
-function buildConnectorSegments(gridElement, level, selectedBranch) {
+function buildConnectorSegments(gridElement, level, branchProgress) {
   const gridRect = gridElement.getBoundingClientRect();
   const segments = [];
   const thickness = 4;
@@ -704,41 +759,41 @@ function buildConnectorSegments(gridElement, level, selectedBranch) {
   }
 
   if (level >= 3) {
-    if (selectedBranch === "skill") {
+    if (branchProgress.skill >= 3) {
       addLink("skill", "dashboard", "skill-to-learning-dashboard");
     }
 
-    if (selectedBranch === "outcome") {
+    if (branchProgress.outcome >= 3) {
       addLink("outcome", "performance-dashboard", "outcome-to-performance-dashboard");
     }
   }
 
   if (level >= 4) {
-    if (selectedBranch === "skill") {
+    if (branchProgress.skill >= 4) {
       addLink("dashboard", "skill-breakdown", "learning-dashboard-to-skill-breakdown");
     }
 
-    if (selectedBranch === "outcome") {
+    if (branchProgress.outcome >= 4) {
       addLink("performance-dashboard", "kpis", "performance-dashboard-to-kpis");
     }
   }
 
   if (level >= 5) {
-    if (selectedBranch === "skill") {
+    if (branchProgress.skill >= 5) {
       addLink("skill-breakdown", "learning-simulation", "skill-breakdown-to-learning-simulation");
     }
 
-    if (selectedBranch === "outcome") {
+    if (branchProgress.outcome >= 5) {
       addLink("kpis", "prioritization", "kpis-to-prioritization");
     }
   }
 
   if (level >= 6) {
-    if (selectedBranch === "skill") {
+    if (branchProgress.skill >= 6) {
       addLink("learning-simulation", "create", "learning-simulation-to-create");
     }
 
-    if (selectedBranch === "outcome") {
+    if (branchProgress.outcome >= 6) {
       addLink("prioritization", "create", "prioritization-to-create");
     }
   }
@@ -758,8 +813,9 @@ function buildConnectorSegments(gridElement, level, selectedBranch) {
   return segments;
 }
 
-function isNodeComplete(node, level, selectedLearner, selectedBranch) {
+function isNodeComplete(node, level, selectedLearner, branchProgress) {
   const learner = getLearnerForNode(node.id);
+  const branch = getBranchForNode(node.id);
 
   if (node.id === "team") {
     return level >= 1;
@@ -770,29 +826,15 @@ function isNodeComplete(node, level, selectedLearner, selectedBranch) {
   }
 
   if (node.id === "skill" || node.id === "outcome") {
-    return selectedBranch === node.id && level >= 3;
+    return branchProgress[node.id] >= 3;
   }
 
   if (node.id === "practice") {
     return level >= 8;
   }
 
-  if (
-    node.id === "skill" ||
-    node.id === "outcome" ||
-    node.id === "dashboard" ||
-    node.id === "performance-dashboard"
-  ) {
-    return level > node.unlocksAt;
-  }
-
-  if (
-    node.id === "skill-breakdown" ||
-    node.id === "kpis" ||
-    node.id === "learning-simulation" ||
-    node.id === "prioritization"
-  ) {
-    return level > node.unlocksAt;
+  if (branch) {
+    return branchProgress[branch] > node.unlocksAt;
   }
 
   return level > node.unlocksAt;
@@ -807,7 +849,7 @@ function JourneyNode({
   locked,
   onOpenPracticePanel,
   onBranchSelect,
-  reveal,
+  onRevealNode,
   onLearnerSelect,
 }) {
   const Icon = node.icon;
@@ -831,7 +873,7 @@ function JourneyNode({
       return;
     }
 
-    reveal(node.nextLevel);
+    onRevealNode(node);
   };
 
   return (
