@@ -136,8 +136,17 @@ const flow = [
     title: "Create MAP for TAT - (9 Week Plan)"
   },
   {
-    id: "practice",
+    id: "approve",
     unlocksAt: 7,
+    nextLevel: 8,
+    className: "node-approve",
+    tone: "green",
+    icon: CheckCircle2,
+    title: "Review and Approve"
+  },
+  {
+    id: "practice",
+    unlocksAt: 8,
     nextLevel: 8,
     className: "node-practice-box",
     tone: "gold",
@@ -145,22 +154,13 @@ const flow = [
     title: "Quiz, Flashcard & Tip"
   },
   {
-    id: "approve",
-    unlocksAt: 8,
-    nextLevel: 9,
-    className: "node-approve",
-    tone: "green",
-    icon: CheckCircle2,
-    title: "Review and Approve"
-  },
-  {
     id: "released",
-    unlocksAt: 9,
-    nextLevel: 9,
+    unlocksAt: 8,
+    nextLevel: 8,
     className: "node-release",
     tone: "magenta",
     icon: MapIcon,
-    title: "Map Released & Performance Nudges"
+    title: "Performance Nudges"
   }
 ];
 
@@ -310,7 +310,7 @@ const practiceTabs = [
 ];
 
 const kpiPlaceholderItems = [
-  { label: "KPI-1" },
+  { label: "KPI-1", severity: "danger" },
   { label: "KPI-2" },
   { label: "KPI-3" },
   { label: "KPI-4" }
@@ -321,7 +321,7 @@ const branchNodeIds = {
   outcome: ["performance-dashboard", "kpis", "prioritization"]
 };
 
-const sharedTailNodeIds = ["create", "practice", "approve", "released"];
+const sharedTailNodeIds = ["create", "approve", "practice", "released"];
 const branchKeys = ["skill", "outcome"];
 
 const getInitialBranchProgress = () => ({
@@ -349,9 +349,8 @@ function App() {
   const activeNodeIds = useMemo(() => {
     const hasStartedBranch = startedBranches.length > 0;
 
-    if (level >= 9 && hasStartedBranch) return ["released"];
-    if (level >= 8 && hasStartedBranch) return ["approve"];
-    if (level >= 7 && hasStartedBranch) return ["practice"];
+    if (level >= 8 && hasStartedBranch) return ["practice", "released"];
+    if (level >= 7 && hasStartedBranch) return ["approve"];
     if (level >= 6 && hasStartedBranch) return ["create"];
 
     const branchActiveNodes = startedBranches.map((branch) => {
@@ -633,7 +632,9 @@ function ConnectorLayer({ segments }) {
       {segments.map((segment) => (
         <span
           key={segment.key}
-          className={`connector-segment is-${segment.orientation}`}
+          className={`connector-segment is-${segment.orientation} ${
+            segment.variant ? `is-${segment.variant}` : ""
+          }`}
           style={{
             left: `${segment.left}px`,
             top: `${segment.top}px`,
@@ -659,9 +660,26 @@ function buildConnectorSegments(gridElement, level, branchProgress) {
     if (!element) return null;
 
     const rect = element.getBoundingClientRect();
+    const inset = 28;
+    let x = rect.left + rect.width / 2;
+    let y = rect.top + rect.height / 2;
+
+    if (edge === "left") x = rect.left;
+    if (edge === "right") x = rect.right;
+    if (edge === "top") y = rect.top;
+    if (edge === "bottom") y = rect.bottom;
+    if (edge === "top-left") {
+      x = rect.left + inset;
+      y = rect.top;
+    }
+    if (edge === "top-right") {
+      x = rect.right - inset;
+      y = rect.top;
+    }
+
     return {
-      x: rect.left + rect.width / 2 - gridRect.left,
-      y: (edge === "top" ? rect.top : rect.bottom) - gridRect.top
+      x: x - gridRect.left,
+      y: y - gridRect.top
     };
   };
 
@@ -681,7 +699,7 @@ function buildConnectorSegments(gridElement, level, branchProgress) {
     });
   };
 
-  const addHorizontal = (x1, x2, y, key) => {
+  const addHorizontal = (x1, x2, y, key, variant) => {
     const left = Math.min(x1, x2);
     const width = Math.abs(x2 - x1);
 
@@ -693,7 +711,8 @@ function buildConnectorSegments(gridElement, level, branchProgress) {
       left,
       top: y - thickness / 2,
       width,
-      height: thickness
+      height: thickness,
+      variant
     });
   };
 
@@ -731,6 +750,31 @@ function buildConnectorSegments(gridElement, level, branchProgress) {
     });
     addHorizontal(minX, maxX, midY, `${key}-bar`);
     addVertical(target.x, midY, target.y + overlap, `${key}-target`);
+  };
+
+  const addDottedBridge = (sourceId, targetId, key) => {
+    const source = pointFor(sourceId, "right");
+    const target = pointFor(targetId, "left");
+
+    if (!source || !target) return;
+
+    addHorizontal(source.x + overlap, target.x - overlap, (source.y + target.y) / 2, key, "dotted");
+  };
+
+  const addReviewSplit = () => {
+    const source = pointFor("approve", "bottom");
+    const practice = pointFor("practice", "top-right");
+    const released = pointFor("released", "top-left");
+
+    if (!source || !practice || !released) return;
+
+    const targetY = Math.min(practice.y, released.y);
+    const midY = source.y + Math.max(12, (targetY - source.y) / 2);
+
+    addVertical(source.x, source.y - overlap, midY, "approve-to-release-paths-source");
+    addHorizontal(practice.x, released.x, midY, "approve-to-release-paths-bar");
+    addVertical(practice.x, midY, practice.y + overlap, "approve-to-release-paths-practice");
+    addVertical(released.x, midY, released.y + overlap, "approve-to-release-paths-release");
   };
 
   const addLink = (sourceId, targetId, key) => {
@@ -786,6 +830,10 @@ function buildConnectorSegments(gridElement, level, branchProgress) {
     if (branchProgress.outcome >= 5) {
       addLink("kpis", "prioritization", "kpis-to-prioritization");
     }
+
+    if (branchProgress.skill >= 5 && branchProgress.outcome >= 5) {
+      addDottedBridge("learning-simulation", "prioritization", "simulation-to-prioritization");
+    }
   }
 
   if (level >= 6) {
@@ -799,15 +847,11 @@ function buildConnectorSegments(gridElement, level, branchProgress) {
   }
 
   if (level >= 7) {
-    addLink("create", "practice", "create-to-practice");
+    addLink("create", "approve", "create-to-approve");
   }
 
   if (level >= 8) {
-    addLink("practice", "approve", "practice-to-approve");
-  }
-
-  if (level >= 9) {
-    addLink("approve", "released", "approve-to-released");
+    addReviewSplit();
   }
 
   return segments;
@@ -1026,7 +1070,7 @@ function PracticePanel({
 
       <button type="button" className="simulate-action" onClick={onNext}>
         <TrendingUp />
-        <span>Next</span>
+        <span>Done</span>
       </button>
     </aside>
   );
