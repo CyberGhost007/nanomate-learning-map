@@ -2651,3 +2651,1324 @@ button {
     grid-template-columns: 1fr;
   }
 }
+
+/* worxogo reference redesign */
+:root {
+  --wx-purple: #7e00d8;
+  --wx-purple-dark: #32007f;
+  --wx-purple-soft: #d99aff;
+  --wx-line: rgba(189, 124, 230, 0.62);
+  --wx-warning: #ff8b2c;
+  --wx-text: #181818;
+  --wx-muted: #9b9b9b;
+  --wx-panel: rgba(255, 255, 255, 0.78);
+  --wx-panel-edge: rgba(197, 188, 203, 0.44);
+}
+
+html {
+  background: #fbf6ff;
+}
+
+body {
+  overflow-x: hidden;
+  color: var(--wx-text);
+  background: #fbf6ff;
+}
+
+.app-shell {
+  position: relative;
+  min-height: 100vh;
+  padding: 42px clamp(22px, 3.8vw, 72px) 112px;
+  overflow: hidden;
+  background:
+    linear-gradient(90deg, rgba(246, 236, 251, 0.94) 0%, rgba(255, 255, 255, 0.98) 47%, rgba(247, 238, 252, 0.96) 100%),
+    #fbf6ff;
+}
+
+.app-shell::before,
+.app-shell::after {
+  display: none;
+}
+
+.app-shell::before {
+  inset: 650px auto auto -120px;
+  width: min(980px, 58vw);
+  height: 520px;
+  border: 1px solid rgba(190, 190, 190, 0.26);
+  border-radius: 0 46px 46px 0;
+  background: rgba(246, 246, 247, 0.42);
+  box-shadow: inset 0 0 70px rgba(255, 255, 255, 0.7);
+}
+
+.app-shell::after {
+  inset: 1820px -140px auto auto;
+  width: min(820px, 48vw);
+  height: 540px;
+  border: 1px solid rgba(190, 190, 190, 0.24);
+  border-radius: 46px 0 0 46px;
+  background: rgba(246, 246, 247, 0.42);
+  box-shadow: inset 0 0 70px rgba(255, 255, 255, 0.72);
+}
+
+.product-frame {
+  position: relative;
+  z-index: 1;
+  width: min(1720px, 100%);
+}
+
+.topbar {
+  position: relative;
+  top: auto;
+  z-index: 20;
+  gap: 24px;
+  margin-bottom: 34px;
+  padding: 0;
+}
+
+.topbar::before {
+  display: none;
+}
+
+.brand-lockup {
+  gap: 22px;
+}
+
+.brand-logo {
+  display: block;
+  width: clamp(142px, 10.8vw, 184px);
+  height: auto;
+  object-fit: contain;
+}
+
+.brand-divider {
+  display: none;
+}
+
+.brand-lockup h1 {
+  color: var(--wx-purple-dark);
+  font-size: clamp(23px, 1.8vw, 30px);
+  font-weight: 900;
+  line-height: 1;
+}
+
+.topbar-actions {
+  gap: clamp(18px, 2vw, 30px);
+}
+
+.view-mode-toggle {
+  min-height: 32px;
+  gap: 18px;
+  color: var(--wx-purple-dark);
+  font-size: clamp(15px, 1.05vw, 19px);
+  font-weight: 900;
+}
+
+.view-switch {
+  width: 48px;
+  height: 24px;
+  padding: 3px;
+  border-radius: 999px;
+  background: linear-gradient(180deg, #4f4f4f, #7b7b7b);
+  box-shadow:
+    inset 0 1px 2px rgba(0, 0, 0, 0.24),
+    0 2px 8px rgba(45, 0, 90, 0.16);
+}
+
+.view-switch span {
+  width: 18px;
+  height: 18px;
+}
+
+.view-switch.is-on {
+  background: linear-gradient(90deg, #5b00bc, #a300ff);
+  box-shadow:
+    inset 0 1px 3px rgba(255, 255, 255, 0.32),
+    0 4px 13px rgba(126, 0, 216, 0.32);
+}
+
+.view-switch.is-on span {
+  transform: translateX(24px);
+}
+
+.map-control-button {
+  min-height: 32px;
+  border: 0;
+  border-radius: 0;
+  padding: 0;
+  color: #8d8d8d;
+  background: transparent;
+  box-shadow: none;
+  backdrop-filter: none;
+  font-size: clamp(15px, 1.05vw, 19px);
+  font-weight: 900;
+}
+
+.map-control-button:hover,
+.map-control-button:focus-visible {
+  transform: none;
+  color: var(--wx-purple-dark);
+  box-shadow: none;
+}
+
+.map-control-button svg {
+  width: 22px;
+  height: 22px;
+  stroke-width: 2.4;
+}
+
+.workspace,
+.workspace.has-side-panel {
+  display: block;
+}
+
+.journey-map {
+  min-height: 2120px;
+  border: 0;
+  border-radius: 0;
+  padding: 0;
+  overflow: visible;
+  background: transparent;
+  box-shadow: none;
+  backdrop-filter: none;
+}
+
+.journey-grid {
+  --map-row: 92px;
+  --map-row-gap: 54px;
+
+  width: min(1260px, 100%);
+  min-height: 2120px;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  grid-template-rows:
+    var(--map-row)
+    var(--map-row)
+    var(--map-row)
+    var(--map-row)
+    minmax(138px, auto)
+    var(--map-row)
+    var(--map-row)
+    var(--map-row)
+    var(--map-row)
+    420px;
+  gap: var(--map-row-gap) 70px;
+  align-content: start;
+}
+
+.journey-grid.is-contextual-view {
+  min-height: 2120px;
+  grid-template-rows:
+    var(--map-row)
+    var(--map-row)
+    var(--map-row)
+    var(--map-row)
+    minmax(138px, auto)
+    var(--map-row)
+    var(--map-row)
+    var(--map-row)
+    var(--map-row)
+    420px;
+}
+
+.connector-layer {
+  z-index: 0;
+}
+
+.connector-segment,
+.connector-segment.is-vertical {
+  opacity: 0.72;
+  background: var(--wx-line);
+  box-shadow: 0 0 9px rgba(189, 124, 230, 0.18);
+}
+
+.connector-segment.is-dotted {
+  opacity: 0.52;
+  background:
+    radial-gradient(circle, rgba(189, 124, 230, 0.82) 0 38%, transparent 44%) 0 50% / 16px 100% repeat-x;
+}
+
+.journey-node {
+  min-height: 92px;
+  height: auto;
+  border: 2px solid rgba(206, 130, 255, 0.68);
+  border-radius: 28px;
+  padding: 14px 20px;
+  gap: 20px;
+  overflow: visible;
+  color: var(--wx-text);
+  background: rgba(238, 238, 237, 0.72);
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.78),
+    0 12px 32px rgba(41, 20, 60, 0.08);
+}
+
+.journey-node::before {
+  position: absolute;
+  inset: 14px;
+  z-index: -1;
+  content: "";
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.86);
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.75),
+    0 6px 13px rgba(0, 0, 0, 0.08);
+}
+
+.journey-node:hover:not(:disabled),
+.journey-node:focus-visible {
+  transform: translateY(-2px);
+  filter: none;
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.84),
+    0 18px 44px rgba(126, 0, 216, 0.16);
+}
+
+.journey-node.is-active {
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.86),
+    0 0 0 2px rgba(126, 0, 216, 0.08),
+    0 18px 46px rgba(126, 0, 216, 0.13);
+}
+
+.journey-map .journey-node {
+  min-height: 92px;
+  padding: 14px 20px;
+}
+
+.journey-grid.is-contextual-view .node-team,
+.journey-grid.is-contextual-view .node-member-a,
+.journey-grid.is-contextual-view .node-member-b,
+.journey-grid.is-contextual-view .node-member-c,
+.journey-grid.is-contextual-view .node-skill,
+.journey-grid.is-contextual-view .node-outcome,
+.journey-grid.is-contextual-view .node-learning-dashboard,
+.journey-grid.is-contextual-view .node-performance-dashboard,
+.journey-grid.is-contextual-view .node-skill-breakdown,
+.journey-grid.is-contextual-view .node-learning-simulation,
+.journey-grid.is-contextual-view .node-prioritization,
+.journey-grid.is-contextual-view .node-approve,
+.journey-grid.is-contextual-view .node-practice-box,
+.journey-grid.is-contextual-view .node-release {
+  min-height: 92px;
+  height: auto;
+  align-items: center;
+  padding: 14px 20px;
+}
+
+.journey-grid.is-contextual-view .node-skill-breakdown,
+.node-skill-breakdown,
+.node-kpi-box {
+  min-height: 138px;
+}
+
+.icon-tile,
+.panel-icon,
+.practice-panel-icon {
+  color: inherit;
+  background:
+    var(--soft-card-texture) center / 100% 100% no-repeat,
+    rgba(248, 238, 255, 0.84);
+}
+
+.icon-tile,
+.journey-map .icon-tile,
+.node-kpi-box .kpi-card-icon {
+  width: 64px;
+  height: 64px;
+  border-radius: 14px;
+  box-shadow:
+    0 7px 12px rgba(64, 50, 78, 0.14),
+    inset 0 0 0 1px rgba(198, 149, 246, 0.2);
+}
+
+.icon-tile img,
+.journey-map .icon-tile img,
+.node-kpi-box .kpi-card-icon img,
+.practice-panel-icon img {
+  display: block;
+  width: 56px;
+  height: 56px;
+  object-fit: contain;
+}
+
+.node-copy {
+  min-width: 0;
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
+  padding-right: 4px;
+}
+
+.node-copy strong,
+.journey-grid.is-contextual-view .node-team .node-copy > strong,
+.journey-grid.is-contextual-view .node-member-a .node-copy > strong,
+.journey-grid.is-contextual-view .node-member-b .node-copy > strong,
+.journey-grid.is-contextual-view .node-member-c .node-copy > strong,
+.journey-grid.is-contextual-view .node-skill .node-copy > strong,
+.journey-grid.is-contextual-view .node-outcome .node-copy > strong,
+.journey-grid.is-contextual-view .node-learning-dashboard .node-copy > strong,
+.journey-grid.is-contextual-view .node-performance-dashboard .node-copy > strong,
+.journey-grid.is-contextual-view .node-skill-breakdown .node-copy > strong,
+.journey-grid.is-contextual-view .node-learning-simulation .node-copy > strong,
+.journey-grid.is-contextual-view .node-prioritization .node-copy > strong,
+.journey-grid.is-contextual-view .node-approve .node-copy > strong,
+.node-kpi-box .node-copy > strong {
+  color: var(--wx-text);
+  font-size: 19px;
+  font-weight: 900;
+  line-height: 1.08;
+}
+
+.node-create-map .node-copy strong {
+  max-width: 220px;
+}
+
+.node-chip-row,
+.kpi-chip-row {
+  min-width: 0;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 10px;
+}
+
+.node-chip {
+  min-height: 25px;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  border: 1px solid rgba(126, 0, 216, 0.24);
+  border-radius: 4px;
+  padding: 3px 10px;
+  color: #8f14d6;
+  background: rgba(235, 213, 247, 0.78);
+  font-size: 14px;
+  font-weight: 900;
+  line-height: 1.15;
+}
+
+.node-chip svg {
+  width: 15px;
+  height: 15px;
+}
+
+.node-chip.is-subtitle {
+  margin-top: -2px;
+}
+
+.node-chip.is-strong {
+  border-color: transparent;
+  color: #ffffff;
+  background: linear-gradient(90deg, #7500d3, #9700df);
+}
+
+.node-chip.is-warning {
+  border-color: rgba(255, 139, 44, 0.62);
+  color: #ff7a1a;
+  background: rgba(255, 238, 224, 0.86);
+}
+
+.node-member-a,
+.node-member-c {
+  opacity: 0.62;
+}
+
+.journey-node.node-member-b {
+  border-color: rgba(255, 139, 44, 0.7);
+  background: rgba(245, 241, 236, 0.74);
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.82),
+    0 12px 32px rgba(255, 139, 44, 0.08);
+}
+
+.journey-node.node-member-b .node-copy > strong {
+  color: var(--wx-text);
+}
+
+.journey-node.node-member-b .icon-tile {
+  color: inherit;
+  background:
+    var(--soft-card-texture) center / 100% 100% no-repeat,
+    rgba(248, 238, 255, 0.84);
+}
+
+.journey-node.node-member-b.is-active,
+.journey-node.node-member-b.is-selected {
+  border-color: rgba(255, 139, 44, 0.8);
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.84),
+    0 18px 44px rgba(255, 139, 44, 0.12);
+}
+
+.journey-grid.is-contextual-view .node-learning-simulation {
+  border-color: rgba(206, 130, 255, 0.68);
+  background: rgba(238, 238, 237, 0.72);
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.78),
+    0 12px 32px rgba(41, 20, 60, 0.08);
+}
+
+.node-kpi-box {
+  display: flex;
+  grid-template-columns: none;
+  gap: 20px;
+  padding: 14px 20px;
+  background: rgba(238, 238, 237, 0.72);
+}
+
+.kpi-node-body {
+  display: flex;
+  min-width: 0;
+  flex: 1 1 auto;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
+}
+
+.kpi-node-title {
+  color: var(--wx-text);
+  font-size: 19px;
+  font-weight: 900;
+  line-height: 1.08;
+}
+
+.kpi-tile-grid,
+.kpi-tile {
+  all: unset;
+}
+
+.done-mark {
+  display: none;
+}
+
+.node-team {
+  grid-column: 3 / 5;
+}
+
+.node-member-a {
+  grid-column: 1 / 3;
+}
+
+.node-member-b {
+  grid-column: 3 / 5;
+}
+
+.node-member-c {
+  grid-column: 5 / 7;
+}
+
+.node-skill,
+.node-learning-dashboard,
+.node-skill-breakdown,
+.node-learning-simulation,
+.node-practice-box {
+  grid-column: 1 / 3;
+}
+
+.node-outcome,
+.node-performance-dashboard,
+.node-kpi-box,
+.node-prioritization,
+.node-release {
+  grid-column: 5 / 7;
+}
+
+.node-create-map,
+.node-approve {
+  grid-column: 3 / 5;
+}
+
+.node-practice-box,
+.node-release {
+  align-self: center;
+}
+
+.practice-drawer {
+  position: relative;
+  top: auto;
+  grid-column: 1 / 3;
+  grid-row: 10;
+  align-self: start;
+  width: 100%;
+  min-width: 0;
+  max-height: none;
+  border: 2px solid rgba(206, 130, 255, 0.68);
+  border-radius: 28px;
+  padding: 30px 42px 34px;
+  color: var(--wx-text);
+  background: rgba(238, 238, 237, 0.72);
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.78),
+    0 18px 46px rgba(41, 20, 60, 0.08);
+}
+
+.practice-drawer::before {
+  position: absolute;
+  inset: 14px;
+  z-index: 0;
+  content: "";
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.9);
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.76),
+    0 6px 13px rgba(0, 0, 0, 0.08);
+}
+
+.practice-drawer > * {
+  position: relative;
+  z-index: 1;
+}
+
+.practice-drawer-header {
+  align-items: flex-start;
+  margin-bottom: 12px;
+}
+
+.practice-drawer-header h2 {
+  color: var(--wx-text);
+  font-size: 19px;
+  font-weight: 900;
+  line-height: 1;
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+.practice-drawer-header p {
+  margin-top: 6px;
+  color: var(--wx-text);
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+.drawer-icon-button {
+  width: 34px;
+  height: 34px;
+  border: 0;
+  color: #111111;
+  background: transparent;
+}
+
+.drawer-icon-button svg {
+  width: 24px;
+  height: 24px;
+}
+
+.practice-tabs {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 4px;
+  border-radius: 3px;
+  padding: 0;
+  background: transparent;
+}
+
+.practice-tabs button {
+  min-height: 29px;
+  border: 1px solid rgba(126, 0, 216, 0.22);
+  border-radius: 2px;
+  color: #8b17d0;
+  background: rgba(235, 213, 247, 0.52);
+  font-size: 13px;
+  font-weight: 900;
+}
+
+.practice-tabs button.is-selected {
+  color: #ffffff;
+  background: linear-gradient(90deg, #7700d6, #9500dd);
+  box-shadow: none;
+}
+
+.practice-tab-panel {
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 14px 15px;
+  margin-top: 30px;
+  padding: 0;
+}
+
+.practice-panel-icon {
+  width: 30px;
+  height: 30px;
+  border-radius: 8px;
+  box-shadow: none;
+}
+
+.practice-panel-icon img {
+  width: 32px;
+  height: 32px;
+}
+
+.practice-tab-panel h3 {
+  color: var(--wx-text);
+  font-size: 19px;
+  font-weight: 900;
+}
+
+.practice-tab-panel p {
+  margin-top: 22px;
+  color: var(--wx-text);
+  font-size: 14px;
+  line-height: 1.15;
+}
+
+.practice-point-list {
+  gap: 10px;
+  margin-top: 0;
+}
+
+.practice-point-list span {
+  min-height: 31px;
+  border: 1px solid rgba(126, 0, 216, 0.18);
+  border-radius: 2px;
+  padding: 7px 14px;
+  color: #1d1d1d;
+  background: rgba(255, 255, 255, 0.78);
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.simulate-action {
+  width: 100%;
+  min-height: 38px;
+  margin-top: 22px;
+  border-radius: 5px;
+  background: linear-gradient(90deg, #6d00cb, #9d00de);
+  box-shadow: 0 8px 17px rgba(126, 0, 216, 0.34);
+  font-size: 14px;
+  font-weight: 900;
+}
+
+@media (max-width: 980px) {
+  .app-shell {
+    padding: 28px 18px 78px;
+  }
+
+  .topbar {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .topbar-actions {
+    justify-content: flex-start;
+  }
+
+  .journey-map,
+  .journey-grid,
+  .journey-grid.is-contextual-view {
+    min-height: auto;
+  }
+
+  .journey-grid,
+  .journey-grid.is-contextual-view {
+    width: min(560px, 100%);
+    grid-template-columns: 1fr;
+    grid-template-rows: none;
+    grid-auto-rows: auto;
+    gap: 26px;
+  }
+
+  .connector-layer {
+    display: none;
+  }
+
+  .node-team,
+  .node-member-a,
+  .node-member-b,
+  .node-member-c,
+  .node-skill,
+  .node-outcome,
+  .node-learning-dashboard,
+  .node-performance-dashboard,
+  .node-skill-breakdown,
+  .node-kpi-box,
+  .node-learning-simulation,
+  .node-prioritization,
+  .node-create-map,
+  .node-practice-box,
+  .node-approve,
+  .node-release,
+  .practice-drawer {
+    grid-column: 1 / -1;
+    grid-row: auto;
+  }
+
+  .practice-drawer {
+    width: 100%;
+    padding: 26px 28px 30px;
+  }
+}
+
+@media (max-width: 680px) {
+  .brand-logo {
+    width: 138px;
+  }
+
+  .brand-lockup {
+    gap: 14px;
+  }
+
+  .brand-lockup h1 {
+    font-size: 23px;
+  }
+
+  .topbar-actions {
+    gap: 14px 18px;
+  }
+
+  .view-mode-toggle {
+    justify-content: flex-start;
+    width: auto;
+    gap: 12px;
+    font-size: 14px;
+  }
+
+  .map-control-button {
+    flex: 0 0 auto;
+    font-size: 14px;
+  }
+
+  .journey-node,
+  .journey-map .journey-node {
+    min-height: 84px;
+    gap: 14px;
+    border-radius: 24px;
+    padding: 12px 16px;
+  }
+
+  .journey-node::before {
+    inset: 11px;
+  }
+
+  .icon-tile,
+  .journey-map .icon-tile,
+  .node-kpi-box .kpi-card-icon {
+    width: 54px;
+    height: 54px;
+  }
+
+  .icon-tile img,
+  .journey-map .icon-tile img,
+  .node-kpi-box .kpi-card-icon img {
+    width: 48px;
+    height: 48px;
+  }
+
+  .node-copy strong,
+  .kpi-node-title {
+    font-size: 16px;
+  }
+
+  .node-chip {
+    font-size: 12px;
+  }
+
+  .practice-drawer {
+    border-radius: 24px;
+    padding: 24px 22px 28px;
+  }
+}
+
+/* craft polish pass: keep the same visual language, fix proportion and containment */
+.product-frame {
+  width: min(1760px, 100%);
+}
+
+.topbar {
+  margin-bottom: clamp(30px, 4.2vw, 72px);
+}
+
+.journey-map {
+  min-height: clamp(1880px, 122vw, 2280px);
+}
+
+.journey-grid,
+.journey-grid.is-contextual-view {
+  --map-row: 90px;
+  --map-row-gap: clamp(38px, 3.4vw, 58px);
+
+  width: min(1440px, calc(100vw - 92px));
+  min-height: clamp(1880px, 122vw, 2280px);
+  grid-template-rows:
+    96px
+    98px
+    104px
+    104px
+    122px
+    108px
+    94px
+    96px
+    96px
+    minmax(340px, auto);
+  gap: var(--map-row-gap) clamp(48px, 4vw, 76px);
+}
+
+.journey-grid.is-contextual-view {
+  grid-template-rows:
+    104px
+    104px
+    112px
+    112px
+    136px
+    118px
+    98px
+    106px
+    98px
+    minmax(360px, auto);
+}
+
+.connector-segment,
+.connector-segment.is-vertical {
+  opacity: 0.58;
+  background: rgba(190, 121, 232, 0.52);
+  box-shadow: 0 0 7px rgba(190, 121, 232, 0.12);
+}
+
+.connector-segment.is-dotted {
+  opacity: 0.42;
+  background:
+    radial-gradient(circle, rgba(190, 121, 232, 0.72) 0 36%, transparent 42%) 0 50% / 15px 100% repeat-x;
+}
+
+.journey-node,
+.journey-map .journey-node,
+.journey-grid.is-contextual-view .node-team,
+.journey-grid.is-contextual-view .node-member-a,
+.journey-grid.is-contextual-view .node-member-b,
+.journey-grid.is-contextual-view .node-member-c,
+.journey-grid.is-contextual-view .node-skill,
+.journey-grid.is-contextual-view .node-outcome,
+.journey-grid.is-contextual-view .node-learning-dashboard,
+.journey-grid.is-contextual-view .node-performance-dashboard,
+.journey-grid.is-contextual-view .node-skill-breakdown,
+.journey-grid.is-contextual-view .node-learning-simulation,
+.journey-grid.is-contextual-view .node-prioritization,
+.journey-grid.is-contextual-view .node-approve,
+.journey-grid.is-contextual-view .node-practice-box,
+.journey-grid.is-contextual-view .node-release {
+  min-height: 88px;
+  border-width: 1.5px;
+  border-radius: 22px;
+  align-items: center;
+  gap: 14px;
+  overflow: hidden;
+  padding: 12px 16px;
+}
+
+.journey-grid.is-contextual-view .node-member-a,
+.journey-grid.is-contextual-view .node-member-b,
+.journey-grid.is-contextual-view .node-member-c,
+.journey-grid.is-contextual-view .node-skill,
+.journey-grid.is-contextual-view .node-outcome,
+.journey-grid.is-contextual-view .node-learning-dashboard,
+.journey-grid.is-contextual-view .node-performance-dashboard,
+.journey-grid.is-contextual-view .node-prioritization,
+.journey-grid.is-contextual-view .node-approve {
+  min-height: 98px;
+}
+
+.journey-grid.is-contextual-view .node-skill-breakdown,
+.journey-grid.is-contextual-view .node-kpi-box,
+.node-skill-breakdown,
+.node-kpi-box {
+  min-height: 124px;
+}
+
+.journey-node::before {
+  z-index: 0;
+  inset: 11px;
+  border-radius: 15px;
+}
+
+.journey-node > * {
+  position: relative;
+  z-index: 1;
+}
+
+.icon-tile,
+.journey-map .icon-tile,
+.node-kpi-box .kpi-card-icon {
+  width: clamp(48px, 3.8vw, 58px);
+  height: clamp(48px, 3.8vw, 58px);
+  border-radius: 13px;
+  box-shadow:
+    0 8px 14px rgba(64, 50, 78, 0.12),
+    inset 0 0 0 1px rgba(198, 149, 246, 0.2);
+}
+
+.icon-tile img,
+.journey-map .icon-tile img,
+.node-kpi-box .kpi-card-icon img {
+  width: clamp(42px, 3.3vw, 52px);
+  height: clamp(42px, 3.3vw, 52px);
+}
+
+.node-copy {
+  gap: 5px;
+  overflow: hidden;
+  padding-right: 0;
+}
+
+.node-copy strong,
+.journey-grid.is-contextual-view .node-team .node-copy > strong,
+.journey-grid.is-contextual-view .node-member-a .node-copy > strong,
+.journey-grid.is-contextual-view .node-member-b .node-copy > strong,
+.journey-grid.is-contextual-view .node-member-c .node-copy > strong,
+.journey-grid.is-contextual-view .node-skill .node-copy > strong,
+.journey-grid.is-contextual-view .node-outcome .node-copy > strong,
+.journey-grid.is-contextual-view .node-learning-dashboard .node-copy > strong,
+.journey-grid.is-contextual-view .node-performance-dashboard .node-copy > strong,
+.journey-grid.is-contextual-view .node-skill-breakdown .node-copy > strong,
+.journey-grid.is-contextual-view .node-learning-simulation .node-copy > strong,
+.journey-grid.is-contextual-view .node-prioritization .node-copy > strong,
+.journey-grid.is-contextual-view .node-approve .node-copy > strong,
+.node-kpi-box .node-copy > strong,
+.kpi-node-title {
+  max-width: 100%;
+  overflow-wrap: anywhere;
+  font-size: clamp(14px, 1vw, 17px);
+  line-height: 1.08;
+}
+
+.node-team .node-copy strong {
+  font-size: clamp(15px, 1.05vw, 18px);
+}
+
+.node-chip-row,
+.kpi-chip-row {
+  max-width: 100%;
+  gap: 5px 7px;
+}
+
+.node-chip {
+  min-height: 20px;
+  max-width: 100%;
+  border-radius: 4px;
+  padding: 2px 7px;
+  overflow-wrap: anywhere;
+  color: #8614cc;
+  font-size: clamp(10px, 0.72vw, 12px);
+  font-weight: 850;
+  line-height: 1.12;
+}
+
+.node-chip svg {
+  width: 12px;
+  height: 12px;
+}
+
+.node-chip.is-subtitle {
+  margin-top: 0;
+  white-space: nowrap;
+}
+
+.node-chip.is-strong {
+  padding-inline: 8px;
+}
+
+.node-skill .node-chip-row,
+.node-learning-dashboard .node-chip-row,
+.node-performance-dashboard .node-chip-row,
+.node-learning-simulation .node-chip-row,
+.node-prioritization .node-chip-row,
+.node-approve .node-chip-row {
+  align-items: flex-start;
+}
+
+.node-learning-dashboard .node-chip,
+.node-performance-dashboard .node-chip,
+.node-learning-simulation .node-chip,
+.node-prioritization .node-chip,
+.node-approve .node-chip {
+  white-space: normal;
+}
+
+.node-kpi-box {
+  gap: 14px;
+  padding: 12px 16px;
+}
+
+.kpi-node-body {
+  gap: 6px;
+  overflow: hidden;
+}
+
+.kpi-chip-row {
+  gap: 6px;
+}
+
+.journey-node.node-member-b,
+.journey-node.node-member-b.is-active,
+.journey-node.node-member-b.is-selected {
+  border-width: 1.5px;
+}
+
+.practice-drawer {
+  max-width: 400px;
+  min-height: 0;
+  border-width: 1.5px;
+  border-radius: 22px;
+  overflow: hidden;
+  padding: 22px 26px 26px;
+}
+
+.practice-drawer::before {
+  inset: 12px;
+  border-radius: 16px;
+}
+
+.practice-drawer-header {
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.practice-drawer-header h2 {
+  font-size: clamp(18px, 1.25vw, 22px);
+  line-height: 1.06;
+}
+
+.practice-drawer-header p {
+  margin-top: 5px;
+  font-size: 13px;
+}
+
+.drawer-icon-button {
+  width: 28px;
+  height: 28px;
+}
+
+.drawer-icon-button svg {
+  width: 22px;
+  height: 22px;
+}
+
+.practice-tabs {
+  gap: 5px;
+}
+
+.practice-tabs button {
+  min-width: 0;
+  min-height: 30px;
+  padding: 4px 8px;
+  overflow: hidden;
+  font-size: 12px;
+  line-height: 1;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.practice-tab-panel {
+  gap: 12px 14px;
+  margin-top: 24px;
+}
+
+.practice-panel-icon {
+  width: 34px;
+  height: 34px;
+}
+
+.practice-panel-icon img {
+  width: 34px;
+  height: 34px;
+}
+
+.practice-tab-panel h3 {
+  font-size: clamp(16px, 1vw, 18px);
+  line-height: 1.12;
+}
+
+.practice-tab-panel p {
+  margin-top: 10px;
+  font-size: 13px;
+  line-height: 1.25;
+}
+
+.practice-point-list {
+  gap: 8px;
+}
+
+.practice-point-list span {
+  display: flex;
+  align-items: center;
+  min-height: 29px;
+  padding: 6px 12px;
+  font-size: 13px;
+  line-height: 1.18;
+}
+
+.practice-point-list.is-choice span {
+  border-color: rgba(202, 132, 244, 0.34);
+  color: #17151c;
+  background: rgba(255, 255, 255, 0.76);
+  font-weight: 640;
+}
+
+.practice-point-list.is-checklist {
+  gap: 12px;
+  margin-top: 4px;
+}
+
+.practice-point-list.is-checklist span {
+  min-height: 24px;
+  border: 0;
+  padding: 0;
+  color: #17151c;
+  background: transparent;
+  font-size: 13px;
+  font-weight: 560;
+  gap: 10px;
+}
+
+.practice-point-list.is-checklist svg {
+  width: 18px;
+  height: 18px;
+  flex: 0 0 18px;
+  border: 1.5px solid #8a00d4;
+  border-radius: 999px;
+  padding: 2px;
+  color: #8a00d4;
+  stroke-width: 3;
+}
+
+.simulate-action {
+  min-height: 36px;
+  margin-top: 18px;
+  font-size: 13px;
+}
+
+@media (min-width: 981px) and (max-width: 1280px) {
+  .app-shell {
+    padding-inline: 34px;
+  }
+
+  .journey-grid,
+  .journey-grid.is-contextual-view {
+    width: min(1120px, calc(100vw - 68px));
+    gap: clamp(34px, 3vw, 46px) clamp(36px, 3vw, 50px);
+  }
+
+  .journey-node,
+  .journey-map .journey-node {
+    padding-inline: 12px;
+  }
+}
+
+@media (max-width: 980px) {
+  .journey-grid,
+  .journey-grid.is-contextual-view {
+    width: min(560px, 100%);
+    min-height: auto;
+    gap: 22px;
+  }
+
+  .journey-node,
+  .journey-map .journey-node,
+  .journey-grid.is-contextual-view .journey-node {
+    min-height: 82px;
+  }
+
+  .practice-drawer {
+    max-width: 100%;
+  }
+}
+
+/* flat modern node system */
+.journey-node,
+.journey-map .journey-node,
+.journey-grid.is-contextual-view .node-team,
+.journey-grid.is-contextual-view .node-member-a,
+.journey-grid.is-contextual-view .node-member-b,
+.journey-grid.is-contextual-view .node-member-c,
+.journey-grid.is-contextual-view .node-skill,
+.journey-grid.is-contextual-view .node-outcome,
+.journey-grid.is-contextual-view .node-learning-dashboard,
+.journey-grid.is-contextual-view .node-performance-dashboard,
+.journey-grid.is-contextual-view .node-skill-breakdown,
+.journey-grid.is-contextual-view .node-learning-simulation,
+.journey-grid.is-contextual-view .node-prioritization,
+.journey-grid.is-contextual-view .node-approve,
+.journey-grid.is-contextual-view .node-practice-box,
+.journey-grid.is-contextual-view .node-release {
+  border-width: 1.5px;
+  border-color: rgba(202, 132, 244, 0.72);
+  background: rgba(238, 238, 238, 0.52);
+  box-shadow: none;
+}
+
+.journey-node::before {
+  inset: 9px;
+  border: 1px solid rgba(255, 255, 255, 0.84);
+  background: rgba(255, 255, 255, 0.78);
+  box-shadow: none;
+}
+
+.journey-node:hover:not(:disabled),
+.journey-node:focus-visible {
+  transform: none;
+  border-color: rgba(151, 51, 226, 0.78);
+  background: rgba(241, 236, 244, 0.62);
+  box-shadow: none;
+}
+
+.journey-node.is-active {
+  border-color: rgba(151, 51, 226, 0.82);
+  box-shadow: none;
+}
+
+.icon-tile,
+.journey-map .icon-tile,
+.node-kpi-box .kpi-card-icon,
+.practice-panel-icon {
+  border: 1px solid rgba(202, 132, 244, 0.28);
+  background:
+    linear-gradient(145deg, rgba(245, 232, 255, 0.78), rgba(255, 255, 255, 0.88)),
+    rgba(248, 238, 255, 0.84);
+  box-shadow: none;
+}
+
+.journey-node.node-member-b,
+.journey-node.node-member-b.is-active,
+.journey-node.node-member-b.is-selected {
+  border-color: rgba(255, 139, 44, 0.72);
+  background: rgba(246, 239, 232, 0.54);
+  box-shadow: none;
+}
+
+.journey-node.node-member-b:hover:not(:disabled),
+.journey-node.node-member-b:focus-visible {
+  border-color: rgba(247, 128, 31, 0.86);
+  background: rgba(249, 239, 228, 0.66);
+}
+
+.journey-grid.is-contextual-view .node-learning-simulation,
+.node-kpi-box,
+.practice-drawer {
+  box-shadow: none;
+}
+
+.practice-drawer {
+  background: rgba(238, 238, 238, 0.52);
+}
+
+.practice-drawer::before {
+  border: 1px solid rgba(255, 255, 255, 0.84);
+  background: rgba(255, 255, 255, 0.78);
+  box-shadow: none;
+}
+
+.simulate-action {
+  box-shadow: none;
+}
+
+.connector-segment,
+.connector-segment.is-vertical {
+  opacity: 0.52;
+  background: rgba(190, 121, 232, 0.48);
+  box-shadow: none;
+}
+
+.connector-segment.is-dotted {
+  opacity: 0.38;
+  background:
+    radial-gradient(circle, rgba(190, 121, 232, 0.66) 0 34%, transparent 41%) 0 50% / 15px 100% repeat-x;
+}

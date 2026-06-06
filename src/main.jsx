@@ -2,18 +2,28 @@ import React, { useLayoutEffect, useMemo, useRef, useState } from "react";
 import { createRoot } from "react-dom/client";
 import {
   ArrowLeft,
-  BarChart3,
-  BookOpen,
   Check,
-  CheckCircle2,
-  Lightbulb,
-  MapIcon,
+  Gem,
   RotateCcw,
-  Target,
-  TrendingUp,
-  UserRound,
+  TriangleAlert,
   X,
 } from "lucide-react";
+import worxogoLogo from "./assets/brand/worxogo-logo.png";
+import backgroundTile from "./assets/icons/background.png";
+import createMapIcon from "./assets/icons/create-map-for-tat.png";
+import kpisIcon from "./assets/icons/kpis.png";
+import knowledgeIcon from "./assets/icons/knowledge-behavior-skill.png";
+import learningDashboardIcon from "./assets/icons/learning-dashboard.png";
+import outcomeIcon from "./assets/icons/outcome-score.png";
+import performanceDashboardIcon from "./assets/icons/performance-dashboard.png";
+import performanceNudgeIcon from "./assets/icons/performance-nudge.png";
+import personIcon from "./assets/icons/person.png";
+import prioritizationIcon from "./assets/icons/prioritization.png";
+import quizIcon from "./assets/icons/quiz-flashcard-tips.png";
+import reviewApproveIcon from "./assets/icons/review-approve.png";
+import simulationIcon from "./assets/icons/simulation.png";
+import skillWillIcon from "./assets/icons/skill-will-score.png";
+import teamAbilityIcon from "./assets/icons/team-ability-score.png";
 import "./styles.css";
 
 const flow = [
@@ -23,7 +33,7 @@ const flow = [
     nextLevel: 1,
     className: "node-team",
     tone: "purple",
-    icon: Target,
+    iconSrc: teamAbilityIcon,
     title: "Team Ability Score",
     subtitle: "All members"
   },
@@ -33,7 +43,7 @@ const flow = [
     nextLevel: 1,
     className: "node-member-a",
     tone: "blue",
-    icon: UserRound,
+    iconSrc: personIcon,
     title: "Asha Score"
   },
   {
@@ -42,7 +52,7 @@ const flow = [
     nextLevel: 2,
     className: "node-member-b",
     tone: "green",
-    icon: UserRound,
+    iconSrc: personIcon,
     title: "Rohan Score"
   },
   {
@@ -51,8 +61,8 @@ const flow = [
     nextLevel: 1,
     className: "node-member-c",
     tone: "rose",
-    icon: UserRound,
-    title: "Meera Score"
+    iconSrc: personIcon,
+    title: "Asha Score"
   },
   {
     id: "skill",
@@ -60,7 +70,7 @@ const flow = [
     nextLevel: 3,
     className: "node-skill",
     tone: "green",
-    icon: BarChart3,
+    iconSrc: skillWillIcon,
     title: "Skill-Will Score"
   },
   {
@@ -69,7 +79,7 @@ const flow = [
     nextLevel: 3,
     className: "node-outcome",
     tone: "orange",
-    icon: TrendingUp,
+    iconSrc: outcomeIcon,
     title: "Outcome Score"
   },
   {
@@ -78,7 +88,7 @@ const flow = [
     nextLevel: 4,
     className: "node-learning-dashboard",
     tone: "blue",
-    icon: BarChart3,
+    iconSrc: learningDashboardIcon,
     title: "Learning Dashboard"
   },
   {
@@ -87,7 +97,7 @@ const flow = [
     nextLevel: 5,
     className: "node-skill-breakdown",
     tone: "violet",
-    icon: BookOpen,
+    iconSrc: knowledgeIcon,
     title: "Knowledge, Behavior, Skill"
   },
   {
@@ -96,7 +106,7 @@ const flow = [
     nextLevel: 6,
     className: "node-learning-simulation",
     tone: "sky",
-    icon: TrendingUp,
+    iconSrc: simulationIcon,
     title: "Simulation"
   },
   {
@@ -105,7 +115,7 @@ const flow = [
     nextLevel: 4,
     className: "node-performance-dashboard",
     tone: "blue",
-    icon: BarChart3,
+    iconSrc: performanceDashboardIcon,
     title: "Performance Dashboard"
   },
   {
@@ -114,7 +124,7 @@ const flow = [
     nextLevel: 5,
     className: "node-kpi-box",
     tone: "violet",
-    icon: BarChart3,
+    iconSrc: kpisIcon,
     title: "KPIs"
   },
   {
@@ -123,7 +133,7 @@ const flow = [
     nextLevel: 6,
     className: "node-prioritization",
     tone: "gold",
-    icon: Target,
+    iconSrc: prioritizationIcon,
     title: "Prioritization"
   },
   {
@@ -132,8 +142,8 @@ const flow = [
     nextLevel: 7,
     className: "node-create-map",
     tone: "sky",
-    icon: MapIcon,
-    title: "Create MAP for TAT - (9 Week Plan)"
+    iconSrc: createMapIcon,
+    title: "Create map for TAT (9 week plan)"
   },
   {
     id: "approve",
@@ -141,8 +151,8 @@ const flow = [
     nextLevel: 8,
     className: "node-approve",
     tone: "green",
-    icon: CheckCircle2,
-    title: "Review and Approve"
+    iconSrc: reviewApproveIcon,
+    title: "Review & Approve"
   },
   {
     id: "practice",
@@ -150,8 +160,8 @@ const flow = [
     nextLevel: 8,
     className: "node-practice-box",
     tone: "gold",
-    icon: BookOpen,
-    title: "Quiz, Flashcard & Tip"
+    iconSrc: quizIcon,
+    title: "Quiz, Flashcard & Tips"
   },
   {
     id: "released",
@@ -159,8 +169,8 @@ const flow = [
     nextLevel: 8,
     className: "node-release",
     tone: "magenta",
-    icon: MapIcon,
-    title: "Performance Nudges"
+    iconSrc: performanceNudgeIcon,
+    title: "Performance Nudge"
   }
 ];
 
@@ -220,65 +230,66 @@ const learners = [
 ];
 
 const contextualNodeDetails = {
-  team: {
-    primary: "Team average: 85/100"
-  },
   "member-a-score": {
-    primary: "92/100",
-    metric: "Performance: Excellent"
+    chips: [
+      { label: "92 / 100" },
+      { label: "Excellent", icon: "gem" }
+    ]
   },
   "member-b-score": {
-    primary: "58/100",
-    metric: "Performance: Poor",
-    severity: "danger"
+    chips: [
+      { label: "56 / 100", tone: "warning" },
+      { label: "Poor Score", tone: "warning", icon: "alert" }
+    ]
   },
   "member-c-score": {
-    primary: "88/100",
-    metric: "Performance: Very Good"
+    chips: [
+      { label: "92 / 100" },
+      { label: "Excellent", icon: "gem" }
+    ]
   },
   skill: {
-    primary: "Skill: 85, Will: 71",
-    metric: "Combined: 78"
+    chips: [
+      { label: "78 / 100", tone: "strong" },
+      { label: "Skill: 85" },
+      { label: "Will: 71" }
+    ]
   },
   outcome: {
-    primary: "82/100"
+    chips: [{ label: "82 / 100", tone: "strong" }]
   },
   dashboard: {
-    primary: "Readiness view",
-    metric: "Skill + will signals"
+    chips: [{ label: "Readiness: Skill+Will Signals" }]
   },
   "skill-breakdown": {
-    items: [
-      { label: "Knowledge", value: "82" },
-      { label: "Behavior", value: "76" },
-      { label: "Skill", value: "85" }
+    chips: [
+      { label: "Knowledge: 82" },
+      { label: "Behavior: 76" },
+      { label: "Skill: 85" }
     ]
   },
   "learning-simulation": {
-    variant: "simulation",
-    lift: "5%",
-    primary: "Improvement in TAT over 9 Weeks",
-    confidence: "75%"
+    chips: [
+      { label: "Improvement in TAT over 9 weeks: 5%" },
+      { label: "Confidence: AI 75%" }
+    ]
   },
   "performance-dashboard": {
-    primary: "KPI trend view",
-    metric: "TAT outcome signals"
+    chips: [{ label: "KPI Trend: TAT Outcome Signal" }]
   },
   kpis: {
-    items: [
-      { label: "TAT", value: "58%", severity: "danger" },
-      { label: "Deposit Accuracy", value: "64%" },
-      { label: "Period Basis", value: "61%" },
-      { label: "FTR", value: "72%" }
+    chips: [
+      { label: "TAT: 58%", tone: "warning" },
+      { label: "Deposit Accuracy: 64%" },
+      { label: "Period Basis: 61%" },
+      { label: "FTR: 72%" }
     ]
   },
   prioritization: {
-    primary: "TAT selected",
-    metric: "Highest-impact coaching path"
+    chips: [{ label: "TAT Selected: Highest Impact Coaching Path" }]
   },
   approve: {
-    primary: "Manager review ready",
-    metric: "TAT map approved for release"
+    chips: [{ label: "Manager review ready: TAT map approved for release" }]
   }
 };
 
@@ -286,7 +297,9 @@ const practiceTabs = [
   {
     id: "quiz",
     label: "Quiz",
-    icon: CheckCircle2,
+    iconSrc: quizIcon,
+    pointStyle: "choice",
+    actionLabel: "Submit",
     title: "TAT confidence check",
     body: "Which action best improves Rohan's TAT score this week?",
     points: ["Prioritize period-basis questions", "Review deposit fields before submission", "Practice one timed claims scenario"]
@@ -294,15 +307,19 @@ const practiceTabs = [
   {
     id: "flashcard",
     label: "Flashcard",
-    icon: BookOpen,
+    iconSrc: knowledgeIcon,
+    pointStyle: "checklist",
+    actionLabel: "Done",
     title: "Period basis",
     body: "Period basis decides which claim window the deposit belongs to.",
-    points: ["Confirm the date range", "Match it with the claim rule", "Check the exception note before closing"]
+    points: ["Prioritize period-basis questions", "Review deposit fields before submission", "Practice one timed claims scenario"]
   },
   {
     id: "tips",
     label: "Tips",
-    icon: Lightbulb,
+    iconSrc: reviewApproveIcon,
+    pointStyle: "checklist",
+    actionLabel: "Submit",
     title: "Coaching tip",
     body: "Ask Rohan to explain the deposit decision in one sentence before submitting.",
     points: ["Keep the prompt short", "Use the same example twice", "Record confidence after each attempt"]
@@ -310,10 +327,10 @@ const practiceTabs = [
 ];
 
 const kpiPlaceholderItems = [
-  { label: "KPI-1", severity: "danger" },
-  { label: "KPI-2" },
-  { label: "KPI-3" },
-  { label: "KPI-4" }
+  { label: "TAT", tone: "warning" },
+  { label: "Deposit Accuracy" },
+  { label: "Period Basis" },
+  { label: "FTR" }
 ];
 
 const branchNodeIds = {
@@ -447,38 +464,34 @@ function App() {
   };
 
   return (
-    <main className="app-shell">
+    <main className="app-shell" style={{ "--soft-card-texture": `url(${backgroundTile})` }}>
       <div className="product-frame">
         <TopBar
-          canGoBack={level > 0}
           isContextualView={isContextualView}
           onBack={goBack}
           onRestart={restartFlow}
           onToggleViewMode={() => setIsContextualView((current) => !current)}
         />
         <section
-          className={`workspace ${isPracticePanelOpen ? "has-side-panel" : ""}`}
+          className="workspace"
           aria-label="Microability team learning map"
         >
           <JourneyMap
+            activePracticeTab={activePracticeTab}
             isContextualView={isContextualView}
+            isPracticePanelOpen={isPracticePanelOpen}
             level={level}
             activeNodeIds={activeNodeIds}
             selectedLearner={selectedLearner}
             branchProgress={branchProgress}
             chooseBranch={chooseBranch}
             chooseLearner={chooseLearner}
+            closePracticePanel={() => setIsPracticePanelOpen(false)}
+            continueToReview={continueToReview}
             openPracticePanel={openPracticePanel}
             revealNode={revealNode}
+            selectPracticeTab={setActivePracticeTab}
           />
-          {isPracticePanelOpen && (
-            <PracticePanel
-              activeTab={activePracticeTab}
-              onClose={() => setIsPracticePanelOpen(false)}
-              onSelectTab={setActivePracticeTab}
-              onNext={continueToReview}
-            />
-          )}
         </section>
       </div>
     </main>
@@ -486,7 +499,6 @@ function App() {
 }
 
 function TopBar({
-  canGoBack,
   isContextualView,
   onBack,
   onRestart,
@@ -495,15 +507,13 @@ function TopBar({
   return (
     <header className="topbar">
       <div className="brand-lockup">
-        <span className="brand-mark">N</span>
-        <div>
-          <h1>Microability</h1>
-          <p>Outcome-led Learning</p>
-        </div>
+        <img className="brand-logo" src={worxogoLogo} alt="worxogo" />
+        <span className="brand-divider" aria-hidden="true" />
+        <h1>MicroAbility</h1>
       </div>
       <div className="topbar-actions">
         <div className="view-mode-toggle">
-          <span>View Mode:</span>
+          <span>Overview</span>
           <button
             type="button"
             className={`view-switch ${isContextualView ? "is-on" : ""}`}
@@ -515,33 +525,34 @@ function TopBar({
           </button>
           <span>Contextual View</span>
         </div>
-        {canGoBack && (
-          <>
-            <button type="button" className="map-control-button" onClick={onBack}>
-              <ArrowLeft />
-              <span>Back</span>
-            </button>
-            <button type="button" className="map-control-button" onClick={onRestart}>
-              <RotateCcw />
-              <span>Restart</span>
-            </button>
-          </>
-        )}
+        <button type="button" className="map-control-button" onClick={onRestart}>
+          <RotateCcw />
+          <span>Restart</span>
+        </button>
+        <button type="button" className="map-control-button" onClick={onBack} aria-label="Go back one step">
+          <ArrowLeft />
+          <span>Back</span>
+        </button>
       </div>
     </header>
   );
 }
 
 function JourneyMap({
+  activePracticeTab,
   isContextualView,
+  isPracticePanelOpen,
   level,
   activeNodeIds,
   selectedLearner,
   branchProgress,
   chooseBranch,
   chooseLearner,
+  closePracticePanel,
+  continueToReview,
   openPracticePanel,
   revealNode,
+  selectPracticeTab,
 }) {
   const gridRef = useRef(null);
   const [connectorSegments, setConnectorSegments] = useState([]);
@@ -599,6 +610,14 @@ function JourneyMap({
             />
           );
         })}
+        {isPracticePanelOpen && (
+          <PracticePanel
+            activeTab={activePracticeTab}
+            onClose={closePracticePanel}
+            onSelectTab={selectPracticeTab}
+            onNext={continueToReview}
+          />
+        )}
       </div>
     </section>
   );
@@ -650,7 +669,7 @@ function ConnectorLayer({ segments }) {
 function buildConnectorSegments(gridElement, level, branchProgress) {
   const gridRect = gridElement.getBoundingClientRect();
   const segments = [];
-  const thickness = 4;
+  const thickness = 2;
   const overlap = 2;
 
   const pointFor = (nodeId, edge = "bottom") => {
@@ -896,11 +915,11 @@ function JourneyNode({
   onRevealNode,
   onLearnerSelect,
 }) {
-  const Icon = node.icon;
   const learner = getLearnerForNode(node.id);
   const contextualDetail = contextual ? contextualNodeDetails[node.id] : null;
   const isKpiNode = node.id === "kpis";
-  const kpiItems = contextual ? contextualNodeDetails.kpis.items : kpiPlaceholderItems;
+  const chips = contextualDetail?.chips ?? [];
+  const kpiItems = contextual ? contextualNodeDetails.kpis.chips : kpiPlaceholderItems;
   const handleClick = () => {
     if (learner) {
       onLearnerSelect(learner);
@@ -933,20 +952,17 @@ function JourneyNode({
       {isKpiNode ? (
         <>
           <span className="icon-tile kpi-card-icon">
-            <Icon />
+            <img src={node.iconSrc} alt="" aria-hidden="true" />
           </span>
           <span className="kpi-node-body">
             <strong className="kpi-node-title">{node.title}</strong>
-            <span className="kpi-tile-grid">
+            <span className="node-chip-row kpi-chip-row">
               {kpiItems.map((item) => (
                 <span
                   key={item.label}
-                  className={`kpi-tile ${item.value ? "has-value" : "is-placeholder"} ${
-                    item.severity ? `is-${item.severity}` : ""
-                  }`}
+                  className={`node-chip ${item.tone ? `is-${item.tone}` : ""}`}
                 >
-                  <strong>{item.label}</strong>
-                  {item.value && <em>{item.value}</em>}
+                  {item.label}
                 </span>
               ))}
             </span>
@@ -955,54 +971,23 @@ function JourneyNode({
       ) : (
         <>
           <span className="icon-tile">
-            <Icon />
+            <img src={node.iconSrc} alt="" aria-hidden="true" />
           </span>
           <span className="node-copy">
             <strong>{node.title}</strong>
-            {node.subtitle && <span>{node.subtitle}</span>}
-            {contextualDetail && (
-              <span
-                className={`context-detail-card ${
-                  contextualDetail.severity ? `is-${contextualDetail.severity}` : ""
-                } ${
-                  contextualDetail.variant ? `is-${contextualDetail.variant}` : ""
-                }`}
-              >
-                {contextualDetail.variant === "simulation" ? (
-                  <span className="simulation-context">
-                    <span className="simulation-impact">
-                      <strong>{contextualDetail.lift}</strong>
-                      <span>{contextualDetail.primary}</span>
-                    </span>
-                    <span className="simulation-confidence">
-                      <span>AI</span>
-                      <strong>{contextualDetail.confidence}</strong>
-                      <em>confidence</em>
-                    </span>
+            {node.subtitle && <span className="node-chip is-subtitle">{node.subtitle}</span>}
+            {chips.length > 0 && (
+              <span className="node-chip-row">
+                {chips.map((chip) => (
+                  <span
+                    key={chip.label}
+                    className={`node-chip ${chip.tone ? `is-${chip.tone}` : ""}`}
+                  >
+                    {chip.icon === "gem" && <Gem aria-hidden="true" />}
+                    {chip.icon === "alert" && <TriangleAlert aria-hidden="true" />}
+                    {chip.label}
                   </span>
-                ) : contextualDetail.items ? (
-                  <span className="kpi-context-list">
-                    {contextualDetail.items.map((item) => (
-                      <span
-                        key={item.label}
-                        className={item.severity ? `is-${item.severity}` : undefined}
-                      >
-                        <strong>{item.label}</strong>
-                        {item.value && <em>{item.value}</em>}
-                      </span>
-                    ))}
-                  </span>
-                ) : (
-                  <>
-                    <strong>{contextualDetail.primary}</strong>
-                    {contextualDetail.metric && (
-                      <span>
-                        <BarChart3 />
-                        {contextualDetail.metric}
-                      </span>
-                    )}
-                  </>
-                )}
+                ))}
               </span>
             )}
           </span>
@@ -1024,13 +1009,12 @@ function PracticePanel({
   onNext,
 }) {
   const activePractice = practiceTabs.find((tab) => tab.id === activeTab) ?? practiceTabs[0];
-  const ActiveIcon = activePractice.icon;
 
   return (
     <aside className="practice-drawer" aria-label="Practice panel">
       <div className="practice-drawer-header">
         <div>
-          <h2>Rohan Focus Practice</h2>
+          <h2>Rohan's Focus Practice</h2>
           <p>{activePractice.label}</p>
         </div>
         <button type="button" className="drawer-icon-button" aria-label="Close practice panel" onClick={onClose}>
@@ -1055,22 +1039,24 @@ function PracticePanel({
 
       <section className="practice-tab-panel" aria-label={`${activePractice.label} practice`}>
         <span className="practice-panel-icon">
-          <ActiveIcon />
+          <img src={activePractice.iconSrc} alt="" aria-hidden="true" />
         </span>
         <div>
           <h3>{activePractice.title}</h3>
           <p>{activePractice.body}</p>
         </div>
-        <div className="practice-point-list">
+        <div className={`practice-point-list is-${activePractice.pointStyle}`}>
           {activePractice.points.map((point) => (
-            <span key={point}>{point}</span>
+            <span key={point}>
+              {activePractice.pointStyle === "checklist" && <Check aria-hidden="true" />}
+              {point}
+            </span>
           ))}
         </div>
       </section>
 
       <button type="button" className="simulate-action" onClick={onNext}>
-        <TrendingUp />
-        <span>Done</span>
+        <span>{activePractice.actionLabel}</span>
       </button>
     </aside>
   );
