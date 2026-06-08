@@ -62,7 +62,7 @@ const flow = [
     className: "node-member-c",
     tone: "rose",
     iconSrc: personIcon,
-    title: "Asha Score"
+    title: "Meera Score"
   },
   {
     id: "skill",
@@ -183,10 +183,10 @@ const learners = [
     signal: "On track",
     focus: "Accuracy",
     mapState: "Current",
-    score: "86",
+    score: "92",
     kpiTrends: [
-      { label: "Accuracy", values: [82, 84, 86, 88], unit: "%" },
-      { label: "FTR", values: [80, 82, 85, 86], unit: "%" }
+      { label: "Accuracy", values: [88, 90, 91, 92], unit: "%" },
+      { label: "FTR", values: [86, 88, 90, 91], unit: "%" }
     ],
     context:
       "Asha is steady on quality and does not need a new map this cycle.",
@@ -200,10 +200,10 @@ const learners = [
     signal: "TAT focus",
     focus: "TAT",
     mapState: "Map ready",
-    score: "64",
+    score: "56",
     kpiTrends: [
-      { label: "TAT", values: [76, 72, 68, 64], unit: "%" },
-      { label: "Deposit Accuracy", values: [74, 71, 69, 68], unit: "%" }
+      { label: "TAT", values: [61, 58, 55, 52], unit: "%" },
+      { label: "Deposit Accuracy", values: [64, 62, 60, 58], unit: "%" }
     ],
     context:
       "Rohan is the highlighted team member. The new map should focus on TAT confidence, period basis, and deposit-field practice.",
@@ -218,10 +218,10 @@ const learners = [
     signal: "Stable",
     focus: "Policy review",
     mapState: "Current",
-    score: "81",
+    score: "88",
     kpiTrends: [
-      { label: "Review Quality", values: [78, 80, 81, 81], unit: "%" },
-      { label: "SLA", values: [80, 81, 82, 83], unit: "%" }
+      { label: "Review Quality", values: [84, 86, 87, 88], unit: "%" },
+      { label: "SLA", values: [83, 85, 87, 88], unit: "%" }
     ],
     context:
       "Meera is stable and can stay on the existing coaching cadence.",
@@ -244,52 +244,52 @@ const contextualNodeDetails = {
   },
   "member-c-score": {
     chips: [
-      { label: "92 / 100" },
-      { label: "Excellent", icon: "gem" }
+      { label: "88 / 100" },
+      { label: "Stable", icon: "gem" }
     ]
   },
   skill: {
     chips: [
-      { label: "78 / 100", tone: "strong" },
-      { label: "Skill: 85" },
-      { label: "Will: 71" }
+      { label: "54 / 100" },
+      { label: "Skill: 58" },
+      { label: "Will: 50" }
     ]
   },
   outcome: {
-    chips: [{ label: "82 / 100", tone: "strong" }]
+    chips: [{ label: "57 / 100" }]
   },
   dashboard: {
-    chips: [{ label: "Readiness: Skill+Will Signals" }]
+    chips: [{ label: "Gap: Skill-Will 54" }]
   },
   "skill-breakdown": {
     chips: [
-      { label: "Knowledge: 82" },
-      { label: "Behavior: 76" },
-      { label: "Skill: 85" }
+      { label: "Knowledge: 61" },
+      { label: "Behavior: 49" },
+      { label: "Skill: 58" }
     ]
   },
   "learning-simulation": {
     chips: [
-      { label: "Improvement in TAT over 9 weeks: 5%" },
-      { label: "Confidence: AI 75%" }
+      { label: "TAT: 52% -> 60%" },
+      { label: "Confidence: AI 72%" }
     ]
   },
   "performance-dashboard": {
-    chips: [{ label: "KPI Trend: TAT Outcome Signal" }]
+    chips: [{ label: "Current KPI Index: 57" }]
   },
   kpis: {
     chips: [
-      { label: "TAT: 58%", tone: "warning" },
-      { label: "Deposit Accuracy: 64%" },
-      { label: "Period Basis: 61%" },
-      { label: "FTR: 72%" }
+      { label: "TAT: 52%" },
+      { label: "Deposit Accuracy: 58%" },
+      { label: "Period Basis: 49%" },
+      { label: "FTR: 63%" }
     ]
   },
   prioritization: {
-    chips: [{ label: "TAT Selected: Highest Impact Coaching Path" }]
+    chips: [{ label: "Focus: TAT + Period Basis" }]
   },
   approve: {
-    chips: [{ label: "Manager review ready: TAT map approved for release" }]
+    chips: [{ label: "Approved target: 56 -> 62" }]
   }
 };
 
@@ -327,7 +327,7 @@ const practiceTabs = [
 ];
 
 const kpiPlaceholderItems = [
-  { label: "TAT", tone: "warning" },
+  { label: "TAT" },
   { label: "Deposit Accuracy" },
   { label: "Period Basis" },
   { label: "FTR" }
@@ -504,8 +504,23 @@ function TopBar({
   onRestart,
   onToggleViewMode,
 }) {
+  const [isScrolled, setIsScrolled] = useState(false);
+
+  useLayoutEffect(() => {
+    const updateScrolledState = () => {
+      setIsScrolled(window.scrollY > 2);
+    };
+
+    updateScrolledState();
+    window.addEventListener("scroll", updateScrolledState, { passive: true });
+
+    return () => {
+      window.removeEventListener("scroll", updateScrolledState);
+    };
+  }, []);
+
   return (
-    <header className="topbar">
+    <header className={`topbar ${isScrolled ? "is-scrolled" : ""}`}>
       <div className="brand-lockup">
         <img className="brand-logo" src={worxogoLogo} alt="worxogo" />
         <span className="brand-divider" aria-hidden="true" />
